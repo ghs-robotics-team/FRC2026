@@ -4,28 +4,30 @@
 
 package frc.robot.commands;
 
-import frc.robot.subsystems.ExampleSubsystem;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.PathConstraints;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
-/** An example command that uses an example subsystem. */
-public class ExampleCommand extends Command {
-  @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-  private final ExampleSubsystem m_subsystem;
+public class DriveToPointCommand extends Command {
+  /** Creates a new DriveToPointCommand. */
+  TargetPoints point;
 
-  /**
-   * Creates a new ExampleCommand.
-   *
-   * @param subsystem The subsystem used by this command.
-   */
-  public ExampleCommand(ExampleSubsystem subsystem) {
-    m_subsystem = subsystem;
+  public DriveToPointCommand(TargetPoints point) {
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(subsystem);
+    this.point = point;
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    Command pathfindingCommand = AutoBuilder.pathfindToPose(point.get(), new PathConstraints(3, 3, 2*Math.PI, 4*Math.PI), 0);
+    Field2d field = new Field2d();
+    field.setRobotPose(point.get());
+    SmartDashboard.putData("target point", field);
+    pathfindingCommand.schedule();
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
@@ -38,6 +40,6 @@ public class ExampleCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return true;
   }
 }

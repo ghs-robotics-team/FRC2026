@@ -1,0 +1,56 @@
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
+
+package frc.robot.subsystems;
+
+import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkBase.IdleMode;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+public class Climbers extends SubsystemBase {
+  /** Creates a new Climbers. */
+  
+  CANSparkMax LeftClimber = new CANSparkMax(20, MotorType.kBrushless);
+  CANSparkMax RightClimber = new CANSparkMax(19, MotorType.kBrushless);
+
+  double minLPos = -154.28;
+  double maxLPos = 5;
+  double minRPos = -117.31;
+  double maxRPos = 5;
+
+  public Climbers() {
+    LeftClimber.setIdleMode(IdleMode.kBrake);
+    RightClimber.setIdleMode(IdleMode.kBrake);
+    SmartDashboard.putBoolean("Enable Limits", true);
+    SmartDashboard.putBoolean("Zero Climbers", false);
+  }
+
+  public void setPos(double posLeft, double posRight) {
+    if(posLeft < 0 && LeftClimber.getEncoder().getPosition() > minLPos || posLeft > 0 && LeftClimber.getEncoder().getPosition() < maxLPos || !SmartDashboard.getBoolean("Enable Limits", true)){
+      LeftClimber.set(Math.pow(posLeft, 3)/1.8);
+    }else{
+      LeftClimber.set(0);
+    }
+    if(posRight < 0 && RightClimber.getEncoder().getPosition() > minRPos || posRight > 0 && RightClimber.getEncoder().getPosition() < maxRPos || !SmartDashboard.getBoolean("Enable Limits", true)){
+      RightClimber.set(Math.pow(posRight, 3)/1.8);
+    }else{
+      RightClimber.set(0);
+    }
+    if(SmartDashboard.getBoolean("Zero Climbers", false)){
+      LeftClimber.getEncoder().setPosition(0);
+      RightClimber.getEncoder().setPosition(0);
+      SmartDashboard.putBoolean("Zero Climbers", false);
+    }
+    SmartDashboard.putNumber("left climber pos", LeftClimber.getEncoder().getPosition());
+    SmartDashboard.putNumber("right climber pos", RightClimber.getEncoder().getPosition());
+  }
+
+  @Override
+  public void periodic() {
+    // This method will be called once per scheduler run
+  }
+}

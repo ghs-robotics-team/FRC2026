@@ -24,6 +24,20 @@ public final class Constants {
   public static final double LOOP_TIME = 0.13; // s, 20ms + 110ms sprk max velocity lag
   public static final double MAX_SPEED = 6; // 0.2/2.0 Min/Max
 
+  public static final class UnitConversionConstants{
+    public static final double INDEXER_TICKS_PER_DEGREES = 0.4; //To be calculated later
+  }
+
+  public static final class SetPointConstants{
+    public static final double ARM_AMP = -58.873;
+    public static final double ARM_HUMAN_INTAKE = -50;
+    public static final double ARM_INTAKE = 0;
+    public static final double ARM_SPEAKER = -26.00; //-31.00;
+    public static final double ARM_MAX = 0;
+    public static final double ARM_MIN = -67.24;
+    public static final double ARM_FAR = -42;
+  }
+
   public static final class AutonConstants {
     public static final PIDConstants TRANSLATION_PID = new PIDConstants(7.7, 0, 0.035); // D of 3?
     public static final PIDConstants ANGLE_PID = new PIDConstants(5.0, 0, 0.00);
@@ -40,6 +54,9 @@ public final class Constants {
     public static final double LEFT_Y_DEADBAND = 0.05;
     public static final double RIGHT_X_DEADBAND = 0.1;
     public static final double TURN_CONSTANT = 6;
+
+    // Makes data taking easier
+    public static final boolean SHOOTING_DATA_COLLECTION_MODE = false;
 
     // XBOX mode
     public static final boolean XBOX_DRIVE = false;

@@ -358,7 +358,7 @@ public class SwerveSubsystem extends SubsystemBase
    *
    * @return a Command that centers the modules of the SwerveDrive subsystem
    */
-  public Command centerModulesCommand()
+  public edu.wpi.first.wpilibj2.command.Command centerModulesCommand()
   {
     return run(() -> Arrays.asList(swerveDrive.getModules())
                            .forEach(it -> it.setAngle(0.0)));

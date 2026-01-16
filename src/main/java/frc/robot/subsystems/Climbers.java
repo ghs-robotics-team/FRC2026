@@ -4,9 +4,10 @@
 
 package frc.robot.subsystems;
 
-import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkBase.IdleMode;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -14,17 +15,20 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Climbers extends SubsystemBase {
   /** Creates a new Climbers. */
   
-  CANSparkMax LeftClimber = new CANSparkMax(20, MotorType.kBrushless);
-  CANSparkMax RightClimber = new CANSparkMax(19, MotorType.kBrushless);
+  SparkMax LeftClimber = new SparkMax(20, MotorType.kBrushless);
+  SparkMax RightClimber = new SparkMax(19, MotorType.kBrushless);
 
   double minLPos = -154.28;
   double maxLPos = 5;
   double minRPos = -117.31;
   double maxRPos = 5;
 
+
   public Climbers() {
-    LeftClimber.setIdleMode(IdleMode.kBrake);
-    RightClimber.setIdleMode(IdleMode.kBrake);
+    SparkMaxConfig config = new SparkMaxConfig();
+    config.idleMode(IdleMode.kBrake);
+    LeftClimber.configure(config,com.revrobotics.ResetMode.kResetSafeParameters,com.revrobotics.PersistMode.kPersistParameters);
+    RightClimber.configure(config,com.revrobotics.ResetMode.kResetSafeParameters,com.revrobotics.PersistMode.kPersistParameters);
     SmartDashboard.putBoolean("Enable Limits", true);
     SmartDashboard.putBoolean("Zero Climbers", false);
   }

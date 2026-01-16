@@ -5,9 +5,11 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkMaxConfig;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -17,7 +19,7 @@ import frc.robot.Constants;
 public class Indexer extends SubsystemBase {
   /** Creates a new Indexer. */
   TalonFX Angler = new TalonFX(5);
-  CANSparkMax Driver = new CANSparkMax(16, MotorType.kBrushless);
+  SparkMax Driver = new SparkMax(16, MotorType.kBrushless);
   PIDController pid;
   double currentLocation;
   double direction;
@@ -42,7 +44,7 @@ public class Indexer extends SubsystemBase {
   }
 
   public void setHome(){
-    home = Angler.getRotorPosition().getValue();
+    home = Angler.getRotorPosition().getValueAsDouble();
   }
 
   public void shoot(double dspeed) {
@@ -50,11 +52,15 @@ public class Indexer extends SubsystemBase {
   }
   
   public void coast() {
-    Driver.setIdleMode(IdleMode.kCoast);
+    SparkMaxConfig config = new SparkMaxConfig();
+    config.idleMode(IdleMode.kCoast);
+    Driver.configure(config,com.revrobotics.ResetMode.kResetSafeParameters,com.revrobotics.PersistMode.kPersistParameters);
   }
 
   public void brake() {
-    Driver.setIdleMode(IdleMode.kBrake);
+    SparkMaxConfig config = new SparkMaxConfig();
+    config.idleMode(IdleMode.kBrake);
+    Driver.configure(config,com.revrobotics.ResetMode.kResetSafeParameters,com.revrobotics.PersistMode.kPersistParameters);
   }
 
   public double getAngle(){
@@ -63,7 +69,7 @@ public class Indexer extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Arm Angle", Angler.getRotorPosition().getValue());
+    SmartDashboard.putNumber("Arm Angle", Angler.getRotorPosition().getValueAsDouble());
     SmartDashboard.putNumber("SetAngle", setAngle);
     
     double P = SmartDashboard.getNumber("Indexer-P", 0.28); 
@@ -76,7 +82,7 @@ public class Indexer extends SubsystemBase {
     pid.setI(I);
     pid.setD(D);
 
-    currentLocation = Angler.getRotorPosition().getValue() - home;
+    currentLocation = Angler.getRotorPosition().getValueAsDouble() - home;
     SmartDashboard.putNumber("CurrentLocation", currentLocation); 
     direction = pid.calculate(currentLocation, setAngle);
     direction = MathUtil.clamp(direction, -Speed, Speed);

@@ -5,13 +5,13 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Intake extends SubsystemBase {
   /** Creates a new Intake. */
-  CANSparkMax IntakeMotor = new CANSparkMax(13, MotorType.kBrushless);
+  SparkMax IntakeMotor = new SparkMax(13, MotorType.kBrushless);
   //TalonFX alignmentMotor = new TalonFX(22);
 
   public Intake() {

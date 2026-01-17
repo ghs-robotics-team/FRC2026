@@ -1,5 +1,11 @@
 package frc.robot;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.List;
+
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -9,26 +15,21 @@ public class ShootingHelpers {
   public static double angleInterp(Translation2d speakerPos) {
     double distance = speakerPos.minus(Globals.EagleEye.position.getTranslation()).getNorm();
     SmartDashboard.putNumber("dist", distance);
-    double[][] references = {
-      {0.00,-38},
-      {1.055,-38},
-      {1.540,-35},
-      {1.946,-33.5},
-      {2.33,-32.5},
-      {2.932,-31.25},
-      {3.323,-32.0},
-      {3.756,-29.75},
-      {4.104,-29.65}
-      /*{0,-38.25},
-      {0.8,-34.5},
-      {1.02, -33.6},
-      {1.3, -33.2},
-      {1.5,-32.2},
-      {1.87,-31.125},
-      {2.2, -30.7},
-      {2.39,-30.1},
-      {2.79,-29}*/
-    }; // Distance,Degrees
+    Double[][] references = { {0.0, 0.0}, {1.0, 1.0} };
+    try{
+      references = 
+        Files.readAllLines(Paths.get("src", "main", "deploy", "shootingData.txt"))
+         .stream()
+         .map(line -> line.trim().split("\\s+"))
+         .map(parts -> new double[] {
+             Double.parseDouble(parts[0]),
+             Double.parseDouble(parts[1])
+         })
+         .toList().toArray(Double[][]::new);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    
     // FOR TESTING
     //input angle, if angle works then write angle and distance 
     //in references

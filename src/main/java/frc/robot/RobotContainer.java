@@ -65,7 +65,9 @@ public class RobotContainer {
   public RobotContainer() {
 
     SmartDashboard.putNumber("Workshop MaxSpeed", Globals.workShopSettings.maxSpeed);
-    
+    SmartDashboard.putBoolean("Workshop Mode On", Constants.OperatorConstants.WORKSHOP_MODE);
+    SmartDashboard.putBoolean("Record Data", false);
+
     // Configure the trigger bindings
     drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve"));
     ((Subsystem) eagleeye).setDefaultCommand(eagleeyecommand);

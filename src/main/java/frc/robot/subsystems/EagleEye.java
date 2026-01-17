@@ -1,13 +1,19 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Paths;
+
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
+import frc.robot.Constants.EagleEyeConstants;
 import frc.robot.Globals;
 import frc.robot.LimelightHelpers;
-import frc.robot.Constants.EagleEyeConstants;
 
 public class EagleEye extends SubsystemBase {
   /** Creates a new EagleEye. */
@@ -108,5 +114,21 @@ public class EagleEye extends SubsystemBase {
     }
     Globals.LastVisionMeasurement.confidencea = confidencea;
     Globals.LastVisionMeasurement.confidenceb = confidenceb;
+
+    if (Constants.OperatorConstants.SHOOTING_DATA_COLLECTION_MODE) {
+      if (SmartDashboard.getBoolean("Reset Gyro", false)) {
+        File file = new File(Paths.get("src", "main", "deploy", "shootingData.txt").toUri());
+        try (FileWriter writer = new FileWriter(file)) {
+          // Dist  Angle
+          writer.write(String.valueOf(SmartDashboard.getNumber("dist", 0)) + "  "
+           + String.valueOf(SmartDashboard.getNumber("Test Angle", 0)) + "\n");
+        } catch (IOException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
+    
+        SmartDashboard.putBoolean("Reset Gyro", false);
+      }
+    }
   }
 }

@@ -30,6 +30,10 @@ public final class Globals {
     public static double elevatorTarget = 0;
   }
 
+  public static class workShopSettings {
+    public static double maxSpeed = 2.0;
+  }
+
   public static boolean inPath = false;
   public static XboxController buttonsXbox;
   public static double inversion = 1;

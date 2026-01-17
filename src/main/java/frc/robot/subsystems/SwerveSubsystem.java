@@ -99,11 +99,19 @@ public class SwerveSubsystem extends SubsystemBase
    */
   public SwerveSubsystem(SwerveDriveConfiguration driveCfg, SwerveControllerConfiguration controllerCfg)
   {
-    swerveDrive = new SwerveDrive(driveCfg,
+    if (Constants.OperatorConstants.WORKSHOP_MODE) {
+      swerveDrive = new SwerveDrive(driveCfg,
                                   controllerCfg,
                                   Constants.MAX_SPEED,
                                   new Pose2d(new Translation2d(Meter.of(2), Meter.of(0)),
                                              Rotation2d.fromDegrees(0)));
+    } else {
+      swerveDrive = new SwerveDrive(driveCfg,
+                                  controllerCfg,
+                                  Globals.workShopSettings.maxSpeed,
+                                  new Pose2d(new Translation2d(Meter.of(2), Meter.of(0)),
+                                             Rotation2d.fromDegrees(0)));
+    }
   }
 
   @Override
@@ -115,6 +123,10 @@ public class SwerveSubsystem extends SubsystemBase
       swerveDrive.updateOdometry();
       vision.updatePoseEstimation(swerveDrive);
     }*/
+    if (Constants.OperatorConstants.WORKSHOP_MODE) {
+      Globals.workShopSettings.maxSpeed = SmartDashboard.getNumber("Workshop MaxSpeed", 2.0);
+    }
+
     if (RobotBase.isSimulation())
     {
       

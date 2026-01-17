@@ -63,6 +63,9 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+
+    SmartDashboard.putNumber("Workshop MaxSpeed", Globals.workShopSettings.maxSpeed);
+    
     // Configure the trigger bindings
     drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve"));
     ((Subsystem) eagleeye).setDefaultCommand(eagleeyecommand);

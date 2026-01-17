@@ -58,6 +58,9 @@ public final class Constants {
     // Makes data taking easier
     public static final boolean SHOOTING_DATA_COLLECTION_MODE = false;
 
+    // Makes testing safer and easier
+    public static final boolean WORKSHOP_MODE = false;
+
     // XBOX mode
     public static final boolean XBOX_DRIVE = false;
   }

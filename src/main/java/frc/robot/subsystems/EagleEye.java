@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -20,7 +21,7 @@ public class EagleEye extends SubsystemBase {
   public EagleEye() {
   }
 
-  public double limelightMeasurement (LimelightHelpers.PoseEstimate limelight) {
+  public double limelightMeasurement(LimelightHelpers.PoseEstimate limelight) {
     double confidence = 0;
     if (limelight.tagCount >= 1/* && fieldBoundary.isPoseWithinArea(limelightMeasurementa.pose) */) {
       // Excluding different measurements that are absolute showstoppers even with
@@ -33,18 +34,19 @@ public class EagleEye extends SubsystemBase {
           confidence = 0.2;
         } else {
           // High trust level anything less than this we shouldn't bother with
-          double compareDistance = limelight.pose.getTranslation().getDistance(Globals.EagleEye.position.getTranslation());
-            if( compareDistance < 0.5 ||
+          double compareDistance = limelight.pose.getTranslation()
+              .getDistance(Globals.EagleEye.position.getTranslation());
+          if (compareDistance < 0.5 ||
               (limelight.tagCount >= 2 && limelight.avgTagDist < Units.feetToMeters(20)) ||
               (limelight.tagCount == 1 && limelight.avgTagDist < Units.feetToMeters(15))) {
-              double tagDistance = Units.metersToFeet(limelight.avgTagDist);
-              // Double the distance for solo tag
-              if (limelight.tagCount == 1) {
-                tagDistance = tagDistance * 2;
-              }
-              // Add up to .2 confidence depending on how far away
-              confidence = 0.7 + (tagDistance / 100);
+            double tagDistance = Units.metersToFeet(limelight.avgTagDist);
+            // Double the distance for solo tag
+            if (limelight.tagCount == 1) {
+              tagDistance = tagDistance * 2;
             }
+            // Add up to .2 confidence depending on how far away
+            confidence = 0.7 + (tagDistance / 100);
+          }
         }
       }
     }
@@ -58,12 +60,14 @@ public class EagleEye extends SubsystemBase {
     if (RobotBase.isSimulation())
       return;
 
-    // Don't Read Eagleye during Teleop Paths 
-    /*if(Constants.EagleEyeConstants.IN_PATH_END && Globals.inPath){ 
-      Globals.LastVisionMeasurement.confidencea = 0; 
-      Globals.LastVisionMeasurement.confidenceb = 0;
-      return;
-    } */
+    // Don't Read Eagleye during Teleop Paths
+    /*
+     * if(Constants.EagleEyeConstants.IN_PATH_END && Globals.inPath){
+     * Globals.LastVisionMeasurement.confidencea = 0;
+     * Globals.LastVisionMeasurement.confidenceb = 0;
+     * return;
+     * }
+     */
 
     // If we don't update confidence then we don't send the measurement
     double confidencea = 0;
@@ -72,11 +76,10 @@ public class EagleEye extends SubsystemBase {
     // Gets robot orientation from Gyro
     LimelightHelpers.SetRobotOrientation("limelight-camb", Globals.EagleEye.position.getRotation().getDegrees(), 0, 0,
         0, 0, 0);
-    
+
     LimelightHelpers.SetRobotOrientation("limelight-cama", Globals.EagleEye.position.getRotation().getDegrees(), 0, 0,
         0, 0, 0);
-    
-    
+
     // Gets predicted location based on Tag
     LimelightHelpers.PoseEstimate limelightMeasurementa = LimelightHelpers
         .getBotPoseEstimate_wpiBlue_MegaTag2("limelight-cama");
@@ -84,7 +87,7 @@ public class EagleEye extends SubsystemBase {
     LimelightHelpers.PoseEstimate limelightMeasurementb = LimelightHelpers
         .getBotPoseEstimate_wpiBlue_MegaTag2("limelight-camb");
 
-    if (limelightMeasurementa != null){
+    if (limelightMeasurementa != null) {
       SmartDashboard.putNumber("EEA NumTags", limelightMeasurementa.tagCount);
       SmartDashboard.putNumber("EEA Avg Tag Dist", limelightMeasurementa.avgTagDist);
       SmartDashboard.putNumber("EE Rotation Vel", Globals.EagleEye.rotVel);
@@ -95,40 +98,84 @@ public class EagleEye extends SubsystemBase {
       Globals.LastVisionMeasurement.positiona = limelightMeasurementa.pose;
       Globals.LastVisionMeasurement.timeStamp = limelightMeasurementa.timestampSeconds;
       Globals.LastVisionMeasurement.notRead = true;
-      
+
     }
     if (limelightMeasurementb != null) {
-      
+
       SmartDashboard.putNumber("EEB NumTags", limelightMeasurementb.tagCount);
       SmartDashboard.putNumber("EEB Avg Tag Dist", limelightMeasurementb.avgTagDist);
       SmartDashboard.putNumber("EE Rotation Vel", Globals.EagleEye.rotVel);
       SmartDashboard.putNumber("EE Total Vel", Math.hypot(Globals.EagleEye.xVel, Globals.EagleEye.yVel));
-    
+
       confidenceb = limelightMeasurement(limelightMeasurementb);
 
       // No tag found so check no further or pose not within field boundary
       Globals.LastVisionMeasurement.positionb = limelightMeasurementb.pose;
       Globals.LastVisionMeasurement.timeStamp = limelightMeasurementb.timestampSeconds;
       Globals.LastVisionMeasurement.notRead = true;
-      
+
     }
     Globals.LastVisionMeasurement.confidencea = confidencea;
     Globals.LastVisionMeasurement.confidenceb = confidenceb;
 
     if (Constants.OperatorConstants.SHOOTING_DATA_COLLECTION_MODE) {
-      if (SmartDashboard.getBoolean("Reset Gyro", false)) {
+      if (SmartDashboard.getBoolean("Record Data", false)) {
         File file = new File(Paths.get("src", "main", "deploy", "shootingData.txt").toUri());
         try (FileWriter writer = new FileWriter(file)) {
-          // Dist  Angle
+          // Dist Angle
           writer.write(String.valueOf(SmartDashboard.getNumber("dist", 0)) + "  "
-           + String.valueOf(SmartDashboard.getNumber("Test Angle", 0)) + "\n");
+              + String.valueOf(SmartDashboard.getNumber("Test Angle", 0)) + "\n");
         } catch (IOException e) {
-          // TODO Auto-generated catch block
           e.printStackTrace();
         }
-    
-        SmartDashboard.putBoolean("Reset Gyro", false);
+
+        SmartDashboard.putBoolean("Record Data", false);
       }
+
+      boolean button = SmartDashboard.getBoolean("Record Time Data", false);
+      Timer timer = Globals.shootingDataCollectionSettings.timer;
+
+      // rising-edge detection
+      if (button && !Globals.shootingDataCollectionSettings.lastButtonState) {
+
+        if (!Globals.shootingDataCollectionSettings.recording) {
+
+          // ===== START RECORDING =====
+          timer.reset();
+          timer.start();
+          Globals.shootingDataCollectionSettings.recording = true;
+
+          Globals.shootingDataCollectionSettings.startPose = Globals.EagleEye.position;
+
+        } else {
+
+          // ===== STOP RECORDING =====
+          timer.stop();
+
+          double elapsedTime = timer.get();
+          Globals.shootingDataCollectionSettings.endPose = Globals.EagleEye.position;
+          double distance = Globals.shootingDataCollectionSettings.endPose.getTranslation()
+          .getDistance(Globals.shootingDataCollectionSettings.startPose.getTranslation());
+
+
+          File file = new File(Paths.get("src", "main", "deploy", "shootingTimeData.txt").toUri());
+          try (FileWriter writer = new FileWriter(file)) {
+            // Dist Time
+            writer.write(String.valueOf(distance) + "  "
+                + String.valueOf(elapsedTime) + "\n");
+          } catch (IOException e) {
+            e.printStackTrace();
+          }
+
+          Globals.shootingDataCollectionSettings.recording = false;
+        }
+
+        // make dashboard act like a button
+        SmartDashboard.putBoolean("Record Time Data", false);
+      }
+
+      // save last button state
+      Globals.shootingDataCollectionSettings.lastButtonState = button;
     }
   }
 }

@@ -67,14 +67,20 @@ public class ShootingHelpers {
   public static double timeInterp(Translation2d speakerPos) {
     double distance = speakerPos.minus(Globals.EagleEye.position.getTranslation()).getNorm();
     SmartDashboard.putNumber("dist", distance);
-    double[][] references = { // Get Time Data
-        {0, 0.15},
-        {1.182,0.22},
-        {1.955,0.28},
-        {2.824,0.37},
-        {3.765,0.51},
-        {10,0.51}
-    }; // Distance,Time
+    Double[][] references = { {0.0, 0.0}, {1.0, 1.0} }; // Get Time data
+    try{
+      references = 
+        Files.readAllLines(Paths.get("src", "main", "deploy", "shootingTimeData.txt"))
+         .stream()
+         .map(line -> line.trim().split("\\s+"))
+         .map(parts -> new double[] {
+             Double.parseDouble(parts[0]),
+             Double.parseDouble(parts[1])
+         })
+         .toList().toArray(Double[][]::new);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
     
 
     int index = -1;

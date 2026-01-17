@@ -1,6 +1,7 @@
 package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 
 public final class Globals {
@@ -32,6 +33,14 @@ public final class Globals {
 
   public static class workShopSettings {
     public static double maxSpeed = 2.0;
+  }
+
+  public static class shootingDataCollectionSettings {
+    public static boolean recording = false;
+    public static boolean lastButtonState = false;
+    public static Timer timer = new Timer();
+    public static Pose2d startPose  = new Pose2d();
+    public static Pose2d endPose  = new Pose2d();
   }
 
   public static boolean inPath = false;

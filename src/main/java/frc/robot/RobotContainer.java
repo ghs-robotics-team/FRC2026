@@ -70,7 +70,7 @@ public class RobotContainer {
     SmartDashboard.putBoolean("Record Time Data", false);
 
     // Configure the trigger bindings
-    drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve"));
+    drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve8702"));
     ((Subsystem) eagleeye).setDefaultCommand(eagleeyecommand);
     
     if (Constants.OperatorConstants.XBOX_DRIVE) {

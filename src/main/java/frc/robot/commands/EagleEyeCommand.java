@@ -1,3 +1,7 @@
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
+
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -5,31 +9,50 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Globals;
 import frc.robot.subsystems.EagleEye;
 
+/**
+ * Command that uses functionalities in the EagleEye subsystem and
+ * displays usage on the SmartDashboard.
+ */
 public class EagleEyeCommand extends Command {
-  /** Creates a new EagleEyeCommand. */
-  EagleEye eagleeye = new EagleEye();
+  private EagleEye eagleeye = new EagleEye();
 
-  public EagleEyeCommand(frc.robot.Globals.EagleEye eagleeye2) {
+  /**
+   * Sets the EagleEye subsystem for this command to use.
+   * 
+   * @param eagleeye EagleEye subsystem to use.
+   */
+  public EagleEyeCommand(EagleEye eagleeye) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.eagleeye = eagleeye;
-    addRequirements(eagleeye);
+    addRequirements(this.eagleeye);
   }
 
-  // Called when the command is initially scheduled.
+  /**
+   * No initialization needed for this command.
+   */
   @Override
-  public void initialize() {}
+  public void initialize() {
+  }
 
-  // Called every time the scheduler runs while the command is scheduled.
+  /**
+   * Continuously updates the SmartDashboard with whether the robot
+   * is using EagleEye pathing.
+   */
   @Override
   public void execute() {
     SmartDashboard.putBoolean("inpath", Globals.inPath);
   }
 
-  // Called once the command ends or is interrupted.
+  /**
+   * No actions needed when the command ends.
+   */
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+  }
 
-  // Returns true when the command should end.
+  /**
+   * This command never finishes on its own.
+   */
   @Override
   public boolean isFinished() {
     return false;

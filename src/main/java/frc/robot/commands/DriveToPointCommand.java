@@ -10,34 +10,53 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
+/**
+ * Drives to a specified point on the field using pathfinding.
+ */
 public class DriveToPointCommand extends Command {
-  /** Creates a new DriveToPointCommand. */
-  TargetPoints point;
+  private TargetPoints point;
 
+  /**
+   * Sets the point for this command to drive to.
+   * 
+   * @param point The point to drive to.
+   */
   public DriveToPointCommand(TargetPoints point) {
-    // Use addRequirements() here to declare subsystem dependencies.
     this.point = point;
   }
 
-  // Called when the command is initially scheduled.
+  /**
+   * Creates a pathfinding command to drive to the specified point
+   * using a given field and AutoBuilder.
+   */
   @Override
   public void initialize() {
-    Command pathfindingCommand = AutoBuilder.pathfindToPose(point.get(), new PathConstraints(3, 3, 2*Math.PI, 4*Math.PI), 0);
+    Command pathfindingCommand = AutoBuilder.pathfindToPose(point.get(),
+        new PathConstraints(3, 3, 2 * Math.PI, 4 * Math.PI), 0);
     Field2d field = new Field2d();
     field.setRobotPose(point.get());
     SmartDashboard.putData("target point", field);
     pathfindingCommand.schedule();
   }
 
-  // Called every time the scheduler runs while the command is scheduled.
+  /**
+   * No need to execute anything here since the pathfinding command is scheduled
+   * in initialize().
+   */
   @Override
-  public void execute() {}
+  public void execute() {
+  }
 
-  // Called once the command ends or is interrupted.
+  /**
+   * No need do anything when the command ends.
+   */
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+  }
 
-  // Returns true when the command should end.
+  /**
+   * This command finishes immediately after scheduling the pathfinding command.
+   */
   @Override
   public boolean isFinished() {
     return true;

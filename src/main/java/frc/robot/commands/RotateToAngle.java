@@ -15,30 +15,42 @@ import frc.robot.LimelightHelpers;
 import frc.robot.LimelightHelpers.LimelightTarget_Fiducial;
 import frc.robot.subsystems.SwerveSubsystem;
 
+/**
+ * Command that rotates the robot to face a specific angle using PID control.
+ */
 public class RotateToAngle extends Command {
-  /** Creates a new RotateToAngle. */
-  SwerveSubsystem swerve;
-  double degreeError;
-  PIDController pid;
-  double direction;
-  double targetDegree;
-  public boolean found;
+  private SwerveSubsystem swerve;
+  private double degreeError;
+  private PIDController pid;
+  private double direction;
+  private double targetDegree;
 
+  /**
+   * Sets SwerveSubsystem and initializes PIDController.
+   * 
+   * @param swerve
+   */
   public RotateToAngle(SwerveSubsystem swerve) {
-    // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(swerve);
     this.swerve = swerve;
-    this.pid = new PIDController(0.08, 0, 0.004); // set PID directions
+    this.pid = new PIDController(0.08, 0, 0.004);
     pid.enableContinuousInput(-180, 180);
+
     SmartDashboard.putNumber("PID-P", pid.getP());
     SmartDashboard.putNumber("PID-I", pid.getI());
     SmartDashboard.putNumber("PID-D", pid.getD());
   }
 
-  // Called when the command is initially scheduled.
+  /**
+   * Stops the robot, gets seen targets from Limelight, gets angle error to
+   * target,
+   * and calculates target angle to rotate to while updating SmartDashboard.
+   */
   @Override
   public void initialize() {
     swerve.drive(new Translation2d(0, 0), 0, true);
+
+    // Get fiducial (AprilTag Sightings) targets from Limelight
     LimelightTarget_Fiducial[] target_Fiducials = LimelightHelpers
         .getLatestResults("limelight-april").targets_Fiducials;
     degreeError = 0;
@@ -49,6 +61,7 @@ public class RotateToAngle extends Command {
       }
     }
 
+    // If no target seen, calculate angle to speaker based on position
     if (degreeError == 0) {
       Translation2d speakerPos;
       if (DriverStation.getAlliance().get() == Alliance.Blue) {
@@ -81,16 +94,21 @@ public class RotateToAngle extends Command {
     SmartDashboard.putNumber("targetDegree", targetDegree);
   }
 
-  // Called every time the scheduler runs while the command is scheduled.
+  /**
+   * Continously calculates the angle error and moves the robot to face the target
+   * angle.
+   */
   @Override
   public void execute() {
     double P = SmartDashboard.getNumber("PID-P", 1.0 / 150.0);
     double I = SmartDashboard.getNumber("PID-I", 0.0);
     double D = SmartDashboard.getNumber("PID-D", 0);
-    // Set PID numbers
+
     pid.setP(P);
     pid.setI(I);
     pid.setD(D);
+
+    // Calculates power using PID to move the motors to the target angle.
     SmartDashboard.putNumber("currentError", pid.getPositionError());
     direction = pid.calculate(swerve.getPose().getRotation().getDegrees(), targetDegree);
 
@@ -98,23 +116,28 @@ public class RotateToAngle extends Command {
       direction = Math.copySign(0.06, direction);
     }
 
+    // Fits direction into -4 to 4 range for swerve drive.
     direction = MathUtil.clamp(direction, -4, 4);
     SmartDashboard.putNumber("Old direction", direction);
     if (pid.getPositionError() > -0.25 && pid.getPositionError() < 0.25) {
+      // Dead Zone
       swerve.drive(new Translation2d(0, 0), 0, true);
-      // deadzone
     } else {
       swerve.drive(new Translation2d(0, 0), direction, true);
     }
   }
 
-  // Called once the command ends or is interrupted.
+  /**
+   * Stops the robot when the command ends.
+   */
   @Override
   public void end(boolean interrupted) {
     swerve.drive(new Translation2d(0, 0), 0, true);
   }
 
-  // Returns true when the command should end.
+  /**
+   * Never finishes on its own.
+   */
   @Override
   public boolean isFinished() {
     return false;

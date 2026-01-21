@@ -4,24 +4,35 @@
 
 package frc.robot.subsystems;
 
-import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+/**
+ * Intake subsystem for controlling the intake mechanism.
+ */
 public class Intake extends SubsystemBase {
-  /** Creates a new Intake. */
-  SparkMax IntakeMotor = new SparkMax(13, MotorType.kBrushless);
-  //TalonFX alignmentMotor = new TalonFX(22);
+  private SparkMax IntakeMotor = new SparkMax(13, MotorType.kBrushless);
 
+  /**
+   * Nothing done in init.
+   */
   public Intake() {
   }
 
+  /**
+   * Spins the intake motor at the specified speed.
+   * (Negative for one direction, positive for the other)
+   * 
+   * @param speed
+   */
   public void spin(double speed) {
     IntakeMotor.set(speed);
-    //alignmentMotor.setVoltage(6);
   }
-  
+
+  /**
+   * Nothing done periodically.
+   */
   @Override
   public void periodic() {
   }

@@ -17,19 +17,26 @@ import frc.robot.ShootingHelpers;
 import frc.robot.subsystems.SwerveSubsystem;
 import swervelib.SwerveDrive;
 
+/**
+ * Continously rotates the robot to face the game piece scoring location.
+ */
 public class ContinuousRotateToAngle extends Command {
-  /** Creates a new RotateToAngle. */
-  SwerveSubsystem swerve;
-  double degreeError;
-  PIDController pid;
-  double direction;
-  double targetDegree;
-  DoubleSupplier translationX;
-  DoubleSupplier translationY;
-  public boolean found;
+  private SwerveSubsystem swerve;
+  private double degreeError;
+  private PIDController pid;
+  private double direction;
+  private double targetDegree;
+  private DoubleSupplier translationX;
+  private DoubleSupplier translationY;
 
+  /**
+   * Initializes the command and establishes command PID.
+   * 
+   * @param swerve       Swerve system to use.
+   * @param translationX x position on the field of the robot.
+   * @param translationY y position on the field of the robot.
+   */
   public ContinuousRotateToAngle(SwerveSubsystem swerve, DoubleSupplier translationX, DoubleSupplier translationY) {
-    // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(swerve);
     this.swerve = swerve;
     this.pid = new PIDController(0.08, 0, 0.004); // set PID directions
@@ -42,22 +49,32 @@ public class ContinuousRotateToAngle extends Command {
     SmartDashboard.putNumber("PID-D", pid.getD());
   }
 
-  // Called when the command is initially scheduled.
+  /**
+   * Stops the robot from moving at the start of the command.
+   */
   @Override
   public void initialize() {
     swerve.drive(new Translation2d(0, 0), 0, true);
   }
 
-  // Called every time the scheduler runs while the command is scheduled.
+  /**
+   * Continously calculates the angle error and moves the robot to face the target
+   * position.
+   */
   @Override
   public void execute() {
     Translation2d speakerPos = ShootingHelpers.getTargetPos();
-    /*if (DriverStation.getAlliance().get() == Alliance.Blue) {
-      speakerPos = new Translation2d(0.02, 5.5826);
-    } else {
-      speakerPos = new Translation2d(16.4646, 5.5826);
-    }*/
 
+    /*
+     * (Outdated code, might be used later)
+     * if (DriverStation.getAlliance().get() == Alliance.Blue) {
+     * speakerPos = new Translation2d(0.02, 5.5826);
+     * } else {
+     * speakerPos = new Translation2d(16.4646, 5.5826);
+     * }
+     */
+
+    // Calculates the angle error between the robot and the target position.
     degreeError = speakerPos.minus(Globals.EagleEye.position.getTranslation()).getAngle().getDegrees()
         - Globals.EagleEye.position.getRotation().getDegrees();
     degreeError = -degreeError;
@@ -76,19 +93,20 @@ public class ContinuousRotateToAngle extends Command {
     double I = SmartDashboard.getNumber("PID-I", 0.0);
     double D = SmartDashboard.getNumber("PID-D", 0);
 
-    // Set PID numbers
     pid.setP(P);
     pid.setI(I);
     pid.setD(D);
 
     SmartDashboard.putNumber("currentError", pid.getPositionError());
+
+    // Calculates power using PID to move the motors to the target angle.
     direction = pid.calculate(swerve.getPose().getRotation().getDegrees(), targetDegree);
 
     if (direction < 0.06 && direction > -0.06) {
       direction = Math.copySign(0.06, direction);
-
     }
 
+    // Fits direction into -4 to 4 range for swerve drive.
     direction = MathUtil.clamp(direction, -4, 4);
     SmartDashboard.putNumber("Old direction", direction);
     SwerveDrive swerveDrive = swerve.getSwerveDrive();
@@ -102,7 +120,7 @@ public class ContinuousRotateToAngle extends Command {
       xIn = translationX.getAsDouble();
       yIn = translationY.getAsDouble();
     }
-    
+
     if (pid.getPositionError() > -0.25 && pid.getPositionError() < 0.25) {
       swerve.drive(new Translation2d(Math.pow(xIn, 3) * swerveDrive.getMaximumChassisVelocity(),
           Math.pow(yIn, 3) * swerveDrive.getMaximumChassisVelocity()), 0, true);
@@ -113,13 +131,21 @@ public class ContinuousRotateToAngle extends Command {
     }
   }
 
-  // Called once the command ends or is interrupted.
+  /**
+   * Stops the robot from moving when the command ends.
+   * 
+   * @param interrupted whether the command was interrupted.
+   */
   @Override
   public void end(boolean interrupted) {
     swerve.drive(new Translation2d(0, 0), 0, true);
   }
 
-  // Returns true when the command should end.
+  /**
+   * Indicates that the command never finishes on its own.
+   * 
+   * @return false always.
+   */
   @Override
   public boolean isFinished() {
     return false;

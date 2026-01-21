@@ -1,3 +1,7 @@
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
+
 package frc.robot.commands;
 
 import edu.wpi.first.math.geometry.Translation2d;
@@ -9,46 +13,60 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.Globals.EagleEye;
 import frc.robot.subsystems.Indexer;
 
+/**
+ * Command that pitches the indexer to face the speaker based on distance.
+ */
 public class PitchToSpeaker extends Command {
-  Indexer indexer;
-  double shootAngle;
-  double direction;
-  double lastMeasurement = 0;
-  public boolean found;
+  private Indexer indexer;
 
+  /**
+   * Sets Indexer subsystem and puts test angle to SmartDashboard.
+   * 
+   * @param indexer
+   */
   public PitchToSpeaker(Indexer indexer) {
-    // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(indexer);
     this.indexer = indexer;
     SmartDashboard.putNumber("Test Angle", Constants.SetPointConstants.ARM_SPEAKER);
   }
 
-  // Called when the command is initially scheduled.
+  /**
+   * No initialization needed.
+   */
   @Override
   public void initialize() {
   }
 
-  // Called every time the scheduler runs while the command is scheduled.
+  /**
+   * If in test mode, gets distance to target and sets indexer angle to test angle
+   * from SmartDashboard.
+   * If not in test mode, gets target position and sets indexer angle based on
+   * interpolation continously.
+   */
   @Override
   public void execute() {
-    if(!OperatorConstants.SHOOTING_DATA_COLLECTION_MODE){
+    if (!OperatorConstants.SHOOTING_DATA_COLLECTION_MODE) {
       Translation2d speakerPos = ShootingHelpers.getTargetPos();
 
       double targetAngle = ShootingHelpers.angleInterp(speakerPos);
 
       indexer.angle(targetAngle);
-    }else{
+    } else {
       SmartDashboard.putNumber("dist", ShootingHelpers.getTargetPos().getDistance(EagleEye.position.getTranslation()));
       indexer.angle(SmartDashboard.getNumber("Test Angle", Constants.SetPointConstants.ARM_SPEAKER));
     }
   }
 
-  // Called once the command ends or is interrupted.
+  /**
+   * No action needed on end.
+   */
   @Override
   public void end(boolean interrupted) {
   }
 
-  // Returns true when the command should end.
+  /**
+   * Never finishes on its own.
+   */
   @Override
   public boolean isFinished() {
     return false;

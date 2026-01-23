@@ -340,7 +340,6 @@ public class Vision {
 
       camera = new PhotonCamera(name);
 
-      //
       robotToCamTransform = new Transform3d(robotToCamTranslation, robotToCamRotation);
 
       poseEstimator = new PhotonPoseEstimator(Vision.fieldLayout,

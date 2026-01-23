@@ -39,8 +39,8 @@ public class Climbers extends SubsystemBase {
   /**
    * Sets the positions of the left and right climbers with limit checks.
    * 
-   * @param posLeft
-   * @param posRight
+   * @param posLeft  Left climber position.
+   * @param posRight Right climber position.
    */
   public void setPos(double posLeft, double posRight) {
     if (posLeft < 0 && LeftClimber.getEncoder().getPosition() > minLPos

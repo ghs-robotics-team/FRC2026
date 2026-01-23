@@ -42,7 +42,7 @@ public class Indexer extends SubsystemBase {
   /**
    * Sets the desired angle for the indexer.
    * 
-   * @param angle
+   * @param angle Target angle.
    */
   public void angle(double angle) {
     setAngle = angle;

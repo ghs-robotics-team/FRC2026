@@ -24,7 +24,7 @@ public class Intake extends SubsystemBase {
    * Spins the intake motor at the specified speed.
    * (Negative for one direction, positive for the other)
    * 
-   * @param speed
+   * @param speed Speed to spin the intake motor at. (-1.0 to 1.0)
    */
   public void spin(double speed) {
     IntakeMotor.set(speed);

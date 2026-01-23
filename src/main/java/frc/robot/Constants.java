@@ -90,7 +90,6 @@ public final class Constants {
   }
 
   /**
-   * \
    * Maximum temperature constants for motors.
    */
   public static class MaximumTemps {

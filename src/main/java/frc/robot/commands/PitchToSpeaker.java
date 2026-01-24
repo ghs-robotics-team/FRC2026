@@ -22,7 +22,7 @@ public class PitchToSpeaker extends Command {
   /**
    * Sets Indexer subsystem and puts test angle to SmartDashboard.
    * 
-   * @param indexer
+   * @param indexer The Indexer subsystem.
    */
   public PitchToSpeaker(Indexer indexer) {
     addRequirements(indexer);

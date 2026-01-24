@@ -5,7 +5,6 @@
 package frc.robot;
 
 import java.io.File;
-import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Joystick;
@@ -13,6 +12,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -36,8 +36,6 @@ public class RobotContainer {
   private final EagleEye eagleeye = new EagleEye();
   private final EagleEyeCommand eagleeyecommand = new EagleEyeCommand(eagleeye);
 
-  private final SendableChooser<Command> auto;
-
   // Teleop Commands
 
   // Controllers
@@ -58,7 +56,7 @@ public class RobotContainer {
 
     // Configure the trigger bindings
     drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve8702"));
-    ((Subsystem) eagleeye).setDefaultCommand(eagleeyecommand);
+    //((Subsystem) eagleeye).setDefaultCommand(eagleeyecommand);
 
     if (Constants.OperatorConstants.XBOX_DRIVE) {
       driverXbox = new XboxController(0);
@@ -87,10 +85,9 @@ public class RobotContainer {
           () -> -rightjoystick.getRawAxis(0));
     }
 
-    auto = AutoBuilder.buildAutoChooser();
-    SmartDashboard.putData("chooseAuto", auto);
-
     configureBindings();
+    drivebase.setDefaultCommand(driveCommand);
+    SmartDashboard.putData(CommandScheduler.getInstance());
   }
 
   /**
@@ -116,7 +113,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return auto.getSelected();
+    return null;
   }
 
   /**

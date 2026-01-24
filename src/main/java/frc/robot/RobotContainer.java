@@ -54,9 +54,14 @@ public class RobotContainer {
     SmartDashboard.putBoolean("Record Data", false);
     SmartDashboard.putBoolean("Record Time Data", false);
 
-    // Configure the trigger bindings
-    drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve8702"));
+    if (Globals.robotSwerveConfig.equals("8702")){
+          drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve8702"));
+    } else {
+          drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve"));
+    }
     //((Subsystem) eagleeye).setDefaultCommand(eagleeyecommand);
+
+    // Configure the trigger bindings
 
     if (Constants.OperatorConstants.XBOX_DRIVE) {
       driverXbox = new XboxController(0);

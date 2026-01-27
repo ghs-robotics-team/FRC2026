@@ -85,9 +85,9 @@ public class RobotContainer {
       driveCommand = drivebase.driveCommand(
           () -> MathUtil.applyDeadband(leftjoystick.getRawAxis(1) * Globals.inversion,
               OperatorConstants.LEFT_Y_DEADBAND),
-          () -> MathUtil.applyDeadband(leftjoystick.getRawAxis(0) * Globals.inversion,
-              OperatorConstants.LEFT_X_DEADBAND),
-          () -> -rightjoystick.getRawAxis(0));
+          () -> 0.0, //MathUtil.applyDeadband(leftjoystick.getRawAxis(0) * Globals.inversion,
+              //OperatorConstants.LEFT_X_DEADBAND),
+          () -> 0.0); //-rightjoystick.getRawAxis(0));
     }
 
     configureBindings();

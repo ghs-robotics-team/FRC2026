@@ -14,17 +14,17 @@ import frc.robot.subsystems.EagleEye;
  * displays usage on the SmartDashboard.
  */
 public class EagleEyeCommand extends Command {
-  private EagleEye eagleeye = new EagleEye();
+  private EagleEye eagleEye = new EagleEye();
 
   /**
    * Sets the EagleEye subsystem for this command to use.
    * 
-   * @param eagleeye EagleEye subsystem to use.
+   * @param eagleEye EagleEye subsystem to use.
    */
-  public EagleEyeCommand(EagleEye eagleeye) {
+  public EagleEyeCommand(EagleEye eagleEye) {
     // Use addRequirements() here to declare subsystem dependencies.
-    this.eagleeye = eagleeye;
-    addRequirements(this.eagleeye);
+    this.eagleEye = eagleEye;
+    addRequirements(this.eagleEye);
   }
 
   /**
@@ -40,7 +40,7 @@ public class EagleEyeCommand extends Command {
    */
   @Override
   public void execute() {
-    SmartDashboard.putBoolean("inpath", Globals.inPath);
+    SmartDashboard.putBoolean("inPath", Globals.inPath);
   }
 
   /**

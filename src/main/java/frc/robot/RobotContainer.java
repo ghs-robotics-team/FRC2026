@@ -9,11 +9,9 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
@@ -32,17 +30,17 @@ import frc.robot.subsystems.SwerveSubsystem;
  */
 public class RobotContainer {
   // Subsystems
-  private final SwerveSubsystem drivebase;
+  private final SwerveSubsystem driveBase;
   private final EagleEye eagleeye = new EagleEye();
-  private final EagleEyeCommand eagleeyecommand = new EagleEyeCommand(eagleeye);
+  private final EagleEyeCommand eagleEyeCommand = new EagleEyeCommand(eagleeye);
 
   // Teleop Commands
 
   // Controllers
   private XboxController buttonsXbox;
   private XboxController driverXbox;
-  private Joystick rightjoystick;
-  private Joystick leftjoystick;
+  private Joystick rightJoystick;
+  private Joystick leftJoystick;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -55,9 +53,9 @@ public class RobotContainer {
     SmartDashboard.putBoolean("Record Time Data", false);
 
     if (Globals.robotSwerveConfig.equals("8702")){
-          drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve8702"));
+          driveBase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve8702"));
     } else {
-          drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve"));
+          driveBase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve"));
     }
     //((Subsystem) eagleeye).setDefaultCommand(eagleeyecommand);
 
@@ -68,8 +66,8 @@ public class RobotContainer {
       buttonsXbox = new XboxController(1);
       Globals.buttonsXbox = buttonsXbox;
     } else {
-      rightjoystick = new Joystick(0);
-      leftjoystick = new Joystick(1);
+      rightJoystick = new Joystick(0);
+      leftJoystick = new Joystick(1);
       buttonsXbox = new XboxController(2);
       Globals.buttonsXbox = buttonsXbox;
     }
@@ -77,13 +75,13 @@ public class RobotContainer {
     // Configure DriveCommand
     Command driveCommand = null;
     if (OperatorConstants.XBOX_DRIVE) {
-      driveCommand = drivebase.driveCommand(
+      driveCommand = driveBase.driveCommand(
           () -> MathUtil.applyDeadband(-driverXbox.getLeftY() * Globals.inversion, OperatorConstants.LEFT_Y_DEADBAND),
           () -> MathUtil.applyDeadband(-driverXbox.getLeftX() * Globals.inversion, OperatorConstants.LEFT_X_DEADBAND),
           () -> MathUtil.applyDeadband(-driverXbox.getRightX(), OperatorConstants.RIGHT_X_DEADBAND));
     } else {
-      driveCommand = drivebase.driveCommand(
-          () -> MathUtil.applyDeadband(leftjoystick.getRawAxis(1) * Globals.inversion,
+      driveCommand = driveBase.driveCommand(
+          () -> MathUtil.applyDeadband(leftJoystick.getRawAxis(1) * Globals.inversion,
               OperatorConstants.LEFT_Y_DEADBAND),
           () -> 0.0, //MathUtil.applyDeadband(leftjoystick.getRawAxis(0) * Globals.inversion,
               //OperatorConstants.LEFT_X_DEADBAND),
@@ -91,7 +89,7 @@ public class RobotContainer {
     }
 
     configureBindings();
-    drivebase.setDefaultCommand(driveCommand);
+    driveBase.setDefaultCommand(driveCommand);
     SmartDashboard.putData(CommandScheduler.getInstance());
   }
 
@@ -127,6 +125,6 @@ public class RobotContainer {
    * @param brake
    */
   public void setMotorBrake(boolean brake) {
-    drivebase.setMotorBrake(brake);
+    driveBase.setMotorBrake(brake);
   }
 }

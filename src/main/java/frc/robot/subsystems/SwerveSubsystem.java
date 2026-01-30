@@ -134,25 +134,25 @@ public class SwerveSubsystem extends SubsystemBase
     else
     {
       if(/*!DriverStation.isAutonomous()*/true){ // To Enable Eagle, replace if condition with true
-        if(Globals.LastVisionMeasurement.confidencea > 0){
-          swerveDrive.addVisionMeasurement(Globals.LastVisionMeasurement.positiona, Globals.LastVisionMeasurement.timeStamp, VecBuilder.fill(Globals.LastVisionMeasurement.confidencea, Globals.LastVisionMeasurement.confidencea, 99));
+        if(Globals.LastVisionMeasurement.confidenceA > 0){
+          swerveDrive.addVisionMeasurement(Globals.LastVisionMeasurement.positionA, Globals.LastVisionMeasurement.timeStamp, VecBuilder.fill(Globals.LastVisionMeasurement.confidenceA, Globals.LastVisionMeasurement.confidenceA, 99));
           SmartDashboard.putBoolean("SS Eagleeye Read", true);
           SmartDashboard.putBoolean("SS EagleeyeA Read", true);
         }
-        if (Globals.LastVisionMeasurement.confidenceb > 0) {
-          swerveDrive.addVisionMeasurement(Globals.LastVisionMeasurement.positionb, Globals.LastVisionMeasurement.timeStamp, VecBuilder.fill(Globals.LastVisionMeasurement.confidenceb, Globals.LastVisionMeasurement.confidenceb, 99));
+        if (Globals.LastVisionMeasurement.confidenceB > 0) {
+          swerveDrive.addVisionMeasurement(Globals.LastVisionMeasurement.positionB, Globals.LastVisionMeasurement.timeStamp, VecBuilder.fill(Globals.LastVisionMeasurement.confidenceB, Globals.LastVisionMeasurement.confidenceB, 99));
           SmartDashboard.putBoolean("SS Eagleeye Read", true);
           SmartDashboard.putBoolean("SS EagleeyeB Read", true);
         }
-        if (Globals.LastVisionMeasurement.confidenceb == 0 && Globals.LastVisionMeasurement.confidencea == 0) {
+        if (Globals.LastVisionMeasurement.confidenceB == 0 && Globals.LastVisionMeasurement.confidenceA == 0) {
           SmartDashboard.putBoolean("SS Eagleeye Read", false);
         }
         Globals.LastVisionMeasurement.notRead = false;
       }
-      SmartDashboard.putNumber("SS AVisionRotation", Globals.LastVisionMeasurement.positiona.getRotation().getDegrees());
-      SmartDashboard.putNumber("SS BVisionRotation", Globals.LastVisionMeasurement.positionb.getRotation().getDegrees());
-      SmartDashboard.putNumber("SS AConfidence", Globals.LastVisionMeasurement.confidencea);
-      SmartDashboard.putNumber("SS BConfidence", Globals.LastVisionMeasurement.confidenceb);
+      SmartDashboard.putNumber("SS AVisionRotation", Globals.LastVisionMeasurement.positionA.getRotation().getDegrees());
+      SmartDashboard.putNumber("SS BVisionRotation", Globals.LastVisionMeasurement.positionB.getRotation().getDegrees());
+      SmartDashboard.putNumber("SS AConfidence", Globals.LastVisionMeasurement.confidenceA);
+      SmartDashboard.putNumber("SS BConfidence", Globals.LastVisionMeasurement.confidenceB);
       SmartDashboard.putNumber("SS BotRotation", swerveDrive.getPose().getRotation().getDegrees());
       SmartDashboard.putNumber("SS Swerve-Botpose-x",Units.metersToInches(swerveDrive.getPose().getX()));
       SmartDashboard.putNumber("SS Swerve-Botpose-y",Units.metersToInches(swerveDrive.getPose().getY()));

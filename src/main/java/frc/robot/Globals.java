@@ -23,12 +23,12 @@ public final class Globals {
    * Last vision measurement data for EagleEye.
    */
   public static class LastVisionMeasurement {
-    public static Pose2d positiona = new Pose2d();
-    public static Pose2d positionb = new Pose2d();
+    public static Pose2d positionA = new Pose2d();
+    public static Pose2d positionB = new Pose2d();
     public static double timeStamp = 0;
     public static boolean notRead = false;
-    public static double confidencea = 0;
-    public static double confidenceb = 0;
+    public static double confidenceA = 0;
+    public static double confidenceB = 0;
   }
 
   /**

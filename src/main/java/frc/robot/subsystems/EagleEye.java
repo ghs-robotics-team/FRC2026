@@ -50,10 +50,10 @@ public class EagleEye extends SubsystemBase {
           confidence = 0.2;
         } else {
           // High trust level anything less than this we shouldn't bother with
-          double compareDistance = limelight.pose.getTranslation()
+          double compareDistanceMeters = limelight.pose.getTranslation()
               .getDistance(Globals.EagleEye.position.getTranslation());
 
-          if (compareDistance < 0.5 ||
+          if (compareDistanceMeters < 0.5 ||
               (limelight.tagCount >= 2 && limelight.avgTagDist < Units.feetToMeters(20)) ||
               (limelight.tagCount == 1 && limelight.avgTagDist < Units.feetToMeters(15))) {
             double tagDistance = Units.metersToFeet(limelight.avgTagDist);
@@ -91,50 +91,50 @@ public class EagleEye extends SubsystemBase {
      */
 
     // If we don't update confidence then we don't send the measurement
-    double confidencea = 0;
-    double confidenceb = 0;
+    double confidenceA = 0;
+    double confidenceB = 0;
 
     LimelightHelpers.SetRobotOrientation("limelight-camb", Globals.EagleEye.position.getRotation().getDegrees(), 0, 0,
         0, 0, 0);
     LimelightHelpers.SetRobotOrientation("limelight-cama", Globals.EagleEye.position.getRotation().getDegrees(), 0, 0,
         0, 0, 0);
 
-    LimelightHelpers.PoseEstimate limelightMeasurementa = LimelightHelpers
+    LimelightHelpers.PoseEstimate limelightMeasurementA = LimelightHelpers
         .getBotPoseEstimate_wpiBlue_MegaTag2("limelight-cama");
-    LimelightHelpers.PoseEstimate limelightMeasurementb = LimelightHelpers
+    LimelightHelpers.PoseEstimate limelightMeasurementB = LimelightHelpers
         .getBotPoseEstimate_wpiBlue_MegaTag2("limelight-camb");
 
-    if (limelightMeasurementa != null) {
-      SmartDashboard.putNumber("EEA NumTags", limelightMeasurementa.tagCount);
-      SmartDashboard.putNumber("EEA Avg Tag Dist", limelightMeasurementa.avgTagDist);
+    if (limelightMeasurementA != null) {
+      SmartDashboard.putNumber("EEA NumTags", limelightMeasurementA.tagCount);
+      SmartDashboard.putNumber("EEA Avg Tag Dist", limelightMeasurementA.avgTagDist);
       SmartDashboard.putNumber("EE Rotation Vel", Globals.EagleEye.rotVel);
       SmartDashboard.putNumber("EE Total Vel", Math.hypot(Globals.EagleEye.xVel, Globals.EagleEye.yVel));
 
-      confidencea = limelightMeasurement(limelightMeasurementa);
+      confidenceA = limelightMeasurement(limelightMeasurementA);
 
-      Globals.LastVisionMeasurement.positiona = limelightMeasurementa.pose;
-      Globals.LastVisionMeasurement.timeStamp = limelightMeasurementa.timestampSeconds;
+      Globals.LastVisionMeasurement.positionA = limelightMeasurementA.pose;
+      Globals.LastVisionMeasurement.timeStamp = limelightMeasurementA.timestampSeconds;
       Globals.LastVisionMeasurement.notRead = true;
 
     }
 
-    if (limelightMeasurementb != null) {
+    if (limelightMeasurementB != null) {
 
-      SmartDashboard.putNumber("EEB NumTags", limelightMeasurementb.tagCount);
-      SmartDashboard.putNumber("EEB Avg Tag Dist", limelightMeasurementb.avgTagDist);
+      SmartDashboard.putNumber("EEB NumTags", limelightMeasurementB.tagCount);
+      SmartDashboard.putNumber("EEB Avg Tag Dist", limelightMeasurementB.avgTagDist);
       SmartDashboard.putNumber("EE Rotation Vel", Globals.EagleEye.rotVel);
       SmartDashboard.putNumber("EE Total Vel", Math.hypot(Globals.EagleEye.xVel, Globals.EagleEye.yVel));
 
-      confidenceb = limelightMeasurement(limelightMeasurementb);
+      confidenceB = limelightMeasurement(limelightMeasurementB);
 
       // No tag found so check no further or pose not within field boundary
-      Globals.LastVisionMeasurement.positionb = limelightMeasurementb.pose;
-      Globals.LastVisionMeasurement.timeStamp = limelightMeasurementb.timestampSeconds;
+      Globals.LastVisionMeasurement.positionB = limelightMeasurementB.pose;
+      Globals.LastVisionMeasurement.timeStamp = limelightMeasurementB.timestampSeconds;
       Globals.LastVisionMeasurement.notRead = true;
 
     }
-    Globals.LastVisionMeasurement.confidencea = confidencea;
-    Globals.LastVisionMeasurement.confidenceb = confidenceb;
+    Globals.LastVisionMeasurement.confidenceA = confidenceA;
+    Globals.LastVisionMeasurement.confidenceB = confidenceB;
 
     // ===== SHOOTING DATA COLLECTION =====
     if (Constants.OperatorConstants.SHOOTING_DATA_COLLECTION_MODE) {

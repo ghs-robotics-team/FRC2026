@@ -22,7 +22,7 @@ public class RotateToAngle extends Command {
   private SwerveSubsystem swerve;
   private double degreeError;
   private PIDController pid;
-  private double direction;
+  private double directionFactor;
   private double targetDegree;
 
   /**
@@ -110,20 +110,20 @@ public class RotateToAngle extends Command {
 
     // Calculates power using PID to move the motors to the target angle.
     SmartDashboard.putNumber("currentError", pid.getPositionError());
-    direction = pid.calculate(swerve.getPose().getRotation().getDegrees(), targetDegree);
+    directionFactor = pid.calculate(swerve.getPose().getRotation().getDegrees(), targetDegree);
 
-    if (direction < 0.06 && direction > -0.06) {
-      direction = Math.copySign(0.06, direction);
+    if (directionFactor < 0.06 && directionFactor > -0.06) {
+      directionFactor = Math.copySign(0.06, directionFactor);
     }
 
     // Fits direction into -4 to 4 range for swerve drive.
-    direction = MathUtil.clamp(direction, -4, 4);
-    SmartDashboard.putNumber("Old direction", direction);
+    directionFactor = MathUtil.clamp(directionFactor, -4, 4);
+    SmartDashboard.putNumber("Old direction", directionFactor);
     if (pid.getPositionError() > -0.25 && pid.getPositionError() < 0.25) {
       // Dead Zone
       swerve.drive(new Translation2d(0, 0), 0, true);
     } else {
-      swerve.drive(new Translation2d(0, 0), direction, true);
+      swerve.drive(new Translation2d(0, 0), directionFactor, true);
     }
   }
 

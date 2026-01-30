@@ -93,7 +93,7 @@ public final class Constants {
    * Maximum temperature constants for motors.
    */
   public static class MaximumTemps {
-    public static final double MaxNeoTemp = 90;
-    public static final double MaxFalconTemp = 90;
+    public static final double MAX_NEO_TEMP = 90;
+    public static final double MAX_FALCON_TEMP = 90;
   }
 }

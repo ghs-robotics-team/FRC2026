@@ -52,7 +52,8 @@ public final class Globals {
    * Changeable in SmartDashboard.
    */
   public static class workShopSettings {
-    public static double maxSpeed = 2.0;
+    public static double maxSpeed = 2;
+    public static double maxRotateSpeed = Math.toRadians(360);
   }
 
   /**

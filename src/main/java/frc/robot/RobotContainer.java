@@ -5,6 +5,7 @@
 package frc.robot;
 
 import java.io.File;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Joystick;
@@ -15,8 +16,8 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.subsystems.EagleEye;
 import frc.robot.commands.EagleEyeCommand;
+import frc.robot.subsystems.EagleEye;
 import frc.robot.subsystems.SwerveSubsystem;
 
 /**
@@ -58,7 +59,7 @@ public class RobotContainer {
           driveBase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve"));
     }
     //((Subsystem) eagleeye).setDefaultCommand(eagleeyecommand);
-
+    driveBase.setMotorBrake(true);
     // Configure the trigger bindings
 
     if (Constants.OperatorConstants.XBOX_DRIVE) {
@@ -83,9 +84,9 @@ public class RobotContainer {
       driveCommand = driveBase.driveCommand(
           () -> MathUtil.applyDeadband(leftJoystick.getRawAxis(1) * Globals.inversion,
               OperatorConstants.LEFT_Y_DEADBAND),
-          () -> 0.0, //MathUtil.applyDeadband(leftjoystick.getRawAxis(0) * Globals.inversion,
-              //OperatorConstants.LEFT_X_DEADBAND),
-          () -> 0.0); //-rightjoystick.getRawAxis(0));
+          () -> MathUtil.applyDeadband(leftJoystick.getRawAxis(0) * Globals.inversion,
+              OperatorConstants.LEFT_X_DEADBAND),
+          () -> rightJoystick.getRawAxis(0));
     }
 
     configureBindings();

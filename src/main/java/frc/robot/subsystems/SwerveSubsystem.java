@@ -135,12 +135,12 @@ public class SwerveSubsystem extends SubsystemBase
     {
       if(/*!DriverStation.isAutonomous()*/true){ // To Enable Eagle, replace if condition with true
         if(Globals.LastVisionMeasurement.confidenceA > 0){
-          swerveDrive.addVisionMeasurement(Globals.LastVisionMeasurement.positionA, Globals.LastVisionMeasurement.timeStamp, VecBuilder.fill(Globals.LastVisionMeasurement.confidenceA, Globals.LastVisionMeasurement.confidenceA, 99));
+          swerveDrive.addVisionMeasurement(Globals.LastVisionMeasurement.positionA, Globals.LastVisionMeasurement.timeStampA, VecBuilder.fill(Globals.LastVisionMeasurement.confidenceA, Globals.LastVisionMeasurement.confidenceA, 99));
           SmartDashboard.putBoolean("SS Eagleeye Read", true);
           SmartDashboard.putBoolean("SS EagleeyeA Read", true);
         }
         if (Globals.LastVisionMeasurement.confidenceB > 0) {
-          swerveDrive.addVisionMeasurement(Globals.LastVisionMeasurement.positionB, Globals.LastVisionMeasurement.timeStamp, VecBuilder.fill(Globals.LastVisionMeasurement.confidenceB, Globals.LastVisionMeasurement.confidenceB, 99));
+          swerveDrive.addVisionMeasurement(Globals.LastVisionMeasurement.positionB, Globals.LastVisionMeasurement.timeStampB, VecBuilder.fill(Globals.LastVisionMeasurement.confidenceB, Globals.LastVisionMeasurement.confidenceB, 99));
           SmartDashboard.putBoolean("SS Eagleeye Read", true);
           SmartDashboard.putBoolean("SS EagleeyeB Read", true);
         }
@@ -163,6 +163,7 @@ public class SwerveSubsystem extends SubsystemBase
     Globals.EagleEye.xVel = swerveDrive.getFieldVelocity().vxMetersPerSecond;
     Globals.EagleEye.yVel = swerveDrive.getFieldVelocity().vyMetersPerSecond;
     Globals.EagleEye.rotVel = swerveDrive.getFieldVelocity().omegaRadiansPerSecond;
+    Globals.EagleEye.rawGyroYaw = swerveDrive.getYaw().getDegrees();
   }
 
   @Override

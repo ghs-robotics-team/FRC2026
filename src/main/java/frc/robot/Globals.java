@@ -17,6 +17,7 @@ public final class Globals {
     public static double xVel = 0;
     public static double yVel = 0;
     public static double rotVel = 0;
+    public static double rawGyroYaw = 0;
   }
 
   /**
@@ -25,7 +26,8 @@ public final class Globals {
   public static class LastVisionMeasurement {
     public static Pose2d positionA = new Pose2d();
     public static Pose2d positionB = new Pose2d();
-    public static double timeStamp = 0;
+    public static double timeStampA = 0;
+    public static double timeStampB = 0;
     public static boolean notRead = false;
     public static double confidenceA = 0;
     public static double confidenceB = 0;

@@ -23,7 +23,6 @@ import frc.robot.LimelightHelpers;
  * EagleEye subsystem for vision processing and pose estimation.
  */
 public class EagleEye extends SubsystemBase {
-
   /**
    * Nothing done in init.
    */
@@ -41,7 +40,7 @@ public class EagleEye extends SubsystemBase {
     if (limelight.tagCount >= 1/* && fieldBoundary.isPoseWithinArea(limelightMeasurementa.pose) */) {
 
       // Excluding different measurements that are absolute showstoppers even with full trust
-      if (limelight.avgTagDist < Units.feetToMeters(15) && Globals.EagleEye.rotVel < Math.PI
+      if (limelight.avgTagDist < Units.feetToMeters(15) && Globals.EagleEye.rotVel < Math.PI / 2
           && Math.hypot(Globals.EagleEye.xVel, Globals.EagleEye.yVel) < EagleEyeConstants.MAX_VISION_SPEED) {
         
         // Reasons to blindly trust as much as odometry
@@ -64,7 +63,7 @@ public class EagleEye extends SubsystemBase {
             }
 
             // Add up to .2 confidence depending on how far away
-            confidence = 0.7 + (tagDistance / 100);
+            confidence = 0.7 - (tagDistance / 100);
           }
         }
       }
@@ -94,9 +93,9 @@ public class EagleEye extends SubsystemBase {
     double confidenceA = 0;
     double confidenceB = 0;
 
-    LimelightHelpers.SetRobotOrientation("limelight-camb", Globals.EagleEye.position.getRotation().getDegrees(), 0, 0,
+    LimelightHelpers.SetRobotOrientation("limelight-camb", Globals.EagleEye.rawGyroYaw, 0, 0,
         0, 0, 0);
-    LimelightHelpers.SetRobotOrientation("limelight-cama", Globals.EagleEye.position.getRotation().getDegrees(), 0, 0,
+    LimelightHelpers.SetRobotOrientation("limelight-cama", Globals.EagleEye.rawGyroYaw, 0, 0,
         0, 0, 0);
 
     LimelightHelpers.PoseEstimate limelightMeasurementA = LimelightHelpers
@@ -113,7 +112,7 @@ public class EagleEye extends SubsystemBase {
       confidenceA = limelightMeasurement(limelightMeasurementA);
 
       Globals.LastVisionMeasurement.positionA = limelightMeasurementA.pose;
-      Globals.LastVisionMeasurement.timeStamp = limelightMeasurementA.timestampSeconds;
+      Globals.LastVisionMeasurement.timeStampA = limelightMeasurementA.timestampSeconds;
       Globals.LastVisionMeasurement.notRead = true;
 
     }
@@ -129,7 +128,7 @@ public class EagleEye extends SubsystemBase {
 
       // No tag found so check no further or pose not within field boundary
       Globals.LastVisionMeasurement.positionB = limelightMeasurementB.pose;
-      Globals.LastVisionMeasurement.timeStamp = limelightMeasurementB.timestampSeconds;
+      Globals.LastVisionMeasurement.timeStampB = limelightMeasurementB.timestampSeconds;
       Globals.LastVisionMeasurement.notRead = true;
 
     }

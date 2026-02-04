@@ -32,8 +32,8 @@ import frc.robot.subsystems.SwerveSubsystem;
 public class RobotContainer {
   // Subsystems
   private final SwerveSubsystem driveBase;
-  private final EagleEye eagleeye = new EagleEye();
-  private final EagleEyeCommand eagleEyeCommand = new EagleEyeCommand(eagleeye);
+  private final EagleEye eagleEye = new EagleEye();
+  private final EagleEyeCommand eagleEyeCommand = new EagleEyeCommand(eagleEye);
 
   // Teleop Commands
 
@@ -91,6 +91,7 @@ public class RobotContainer {
 
     configureBindings();
     driveBase.setDefaultCommand(driveCommand);
+    eagleEye.setDefaultCommand(eagleEyeCommand);
     SmartDashboard.putData(CommandScheduler.getInstance());
   }
 

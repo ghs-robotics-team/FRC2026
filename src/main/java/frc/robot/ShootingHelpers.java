@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -19,7 +20,7 @@ public class ShootingHelpers {
    * @param speakerPos Position of the speaker.
    * @return Target angle in degrees.
    */
-  public static double angleInterp(Translation2d speakerPos) {
+  public static double angleInterp(Translation3d speakerPos) {
     double distance = speakerPos.minus(Globals.EagleEye.position.getTranslation()).getNorm();
     SmartDashboard.putNumber("dist", distance);
     Double[][] references = { { 0.0, 0.0 }, { 1.0, 1.0 } };
@@ -81,7 +82,7 @@ public class ShootingHelpers {
    * @param speakerPos Position of the speaker.
    * @return Target time in seconds.
    */
-  public static double timeInterp(Translation2d speakerPos) {
+  public static double timeInterp(Translation3d speakerPos) {
     double distance = speakerPos.minus(Globals.EagleEye.position.getTranslation()).getNorm();
     SmartDashboard.putNumber("dist", distance);
     Double[][] references = { { 0.0, 0.0 }, { 1.0, 1.0 } }; // Get Time data
@@ -121,17 +122,17 @@ public class ShootingHelpers {
    * 
    * @return Target position of the robot.
    */
-  public static Translation2d getTargetPos() {
+  public static Translation3d getTargetPos() {
     // Distance, Interpolation of TIme, Velocity of Robot (eagle Eye)
-    Translation2d speakerPos = getSpeakerPos(DriverStation.getAlliance().get());
+    Translation3d speakerPos = new Translation3d(getSpeakerPos(DriverStation.getAlliance().get()));
     double xVel = Globals.EagleEye.xVel;
     double yVel = Globals.EagleEye.yVel;
     double time = timeInterp(speakerPos);
-    Translation2d targetPos = new Translation2d(speakerPos.getX() - xVel * time, speakerPos.getY() - yVel * time);
+    Translation3d targetPos = new Translation3d(speakerPos.getX() - xVel * time, speakerPos.getY() - yVel * time, speakerPos.getZ());
 
     for (int i = 0; i < 4; i++) {
       time = timeInterp(targetPos);
-      targetPos = new Translation2d(speakerPos.getX() - xVel * time, speakerPos.getY() - yVel * time);
+      targetPos = new Translation3d(speakerPos.getX() - xVel * time, speakerPos.getY() - yVel * time, speakerPos.getZ());
     }
 
     return targetPos;

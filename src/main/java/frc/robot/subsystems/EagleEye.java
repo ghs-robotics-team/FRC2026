@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.EagleEyeConstants;
 import frc.robot.Globals;
+import frc.robot.LimelightHelpers;
 // YALL imports
 import limelight.Limelight;
 import limelight.networktables.LimelightPoseEstimator.EstimationMode;
@@ -115,6 +116,12 @@ public class EagleEye extends SubsystemBase {
 
     Optional<PoseEstimate> estimateA = estimatorA.getPoseEstimate();
     Optional<PoseEstimate> estimateB = estimatorB.getPoseEstimate();
+
+    LimelightHelpers.SetRobotOrientation("limelight-camb", Globals.EagleEye.rawGyroYaw, 0, 0,
+        0, 0, 0);
+    
+    LimelightHelpers.SetRobotOrientation("limelight-cama", Globals.EagleEye.rawGyroYaw, 0, 0,
+        0, 0, 0);
 
     // =====================
     // Feed RAW gyro yaw to vision

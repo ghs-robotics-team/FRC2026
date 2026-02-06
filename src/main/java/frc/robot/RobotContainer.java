@@ -13,7 +13,9 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.EagleEyeCommand;
@@ -110,6 +112,12 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
+    if (OperatorConstants.XBOX_DRIVE) {
+      new JoystickButton(driverXbox, 8).onTrue((new InstantCommand(driveBase::zeroGyro))); // (Start)
+    }
+    else {
+      new JoystickButton(leftJoystick, 4).onTrue((new InstantCommand(driveBase::zeroGyro))); // (Button 4) (Left Thumb Button)
+    }
   }
 
   /**

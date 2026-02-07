@@ -1,6 +1,6 @@
 package frc.robot;
 
-import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 
@@ -13,7 +13,7 @@ public final class Globals {
    * EagleEye vision and pose estimation data.
    */
   public static class EagleEye {
-    public static Pose3d position = new Pose3d();
+    public static Pose2d position = new Pose2d();
     public static double xVel = 0;
     public static double yVel = 0;
     public static double rotVel = 0;
@@ -24,8 +24,8 @@ public final class Globals {
    * Last vision measurement data for EagleEye.
    */
   public static class LastVisionMeasurement {
-    public static Pose3d positionA = new Pose3d();
-    public static Pose3d positionB = new Pose3d();
+    public static Pose2d positionA = new Pose2d();
+    public static Pose2d positionB = new Pose2d();
     public static double timeStampA = 0;
     public static double timeStampB = 0;
     public static boolean notRead = false;
@@ -65,8 +65,8 @@ public final class Globals {
     public static boolean recording = false;
     public static boolean lastButtonState = false;
     public static Timer timer = new Timer();
-    public static Pose3d startPose = new Pose3d();
-    public static Pose3d endPose = new Pose3d();
+    public static Pose2d startPose = new Pose2d();
+    public static Pose2d endPose = new Pose2d();
   }
 
   // Miscellaneous global variables

@@ -18,7 +18,6 @@ import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -121,37 +120,19 @@ public class SwerveSubsystem extends SubsystemBase {
 
     } else {
       if (/* !DriverStation.isAutonomous() */true) { // To Enable Eagle, replace if condition with true
-        // Safer fusion: require minimum confidence and low angular rate. Use
-        // realistic measurement sigmas (larger -> less trust) instead of
-        // treating the 'confidence' value as a sigma directly.
-        final double MIN_CONFIDENCE = 0.15; // tune as needed
-        final double ROT_VEL_LIMIT = 0.6; // rad/s; avoid fusing while rotating quickly
-        final double X_SIGMA = 0.5; // meters
-        final double Y_SIGMA = 0.5; // meters
-        final double THETA_SIGMA = Math.toRadians(20); // radians
-
-        boolean fused = false;
-
-        if (Globals.LastVisionMeasurement.confidenceA >= MIN_CONFIDENCE
-            && Math.abs(Globals.EagleEye.rotVel) < ROT_VEL_LIMIT) {
-          swerveDrive.addVisionMeasurement(Globals.LastVisionMeasurement.positionA.toPose2d(),
-              Globals.LastVisionMeasurement.timeStampA, VecBuilder.fill(X_SIGMA, Y_SIGMA, THETA_SIGMA));
+        if (Globals.LastVisionMeasurement.confidenceA > 0) {
+          swerveDrive.addVisionMeasurement(Globals.LastVisionMeasurement.positionA,
+              Globals.LastVisionMeasurement.timeStampA, VecBuilder.fill(Globals.LastVisionMeasurement.confidenceA,
+                  Globals.LastVisionMeasurement.confidenceA, 99));
           SmartDashboard.putBoolean("SS Eagleeye Read", true);
           SmartDashboard.putBoolean("SS EagleeyeA Read", true);
-          fused = true;
         }
-
-        if (Globals.LastVisionMeasurement.confidenceB >= MIN_CONFIDENCE
-            && Math.abs(Globals.EagleEye.rotVel) < ROT_VEL_LIMIT) {
-          swerveDrive.addVisionMeasurement(Globals.LastVisionMeasurement.positionB.toPose2d(),
-              Globals.LastVisionMeasurement.timeStampB, VecBuilder.fill(X_SIGMA, Y_SIGMA, THETA_SIGMA));
+        if (Globals.LastVisionMeasurement.confidenceB > 0) {
+          swerveDrive.addVisionMeasurement(Globals.LastVisionMeasurement.positionB,
+              Globals.LastVisionMeasurement.timeStampB, VecBuilder.fill(Globals.LastVisionMeasurement.confidenceB,
+                  Globals.LastVisionMeasurement.confidenceB, 99));
           SmartDashboard.putBoolean("SS Eagleeye Read", true);
           SmartDashboard.putBoolean("SS EagleeyeB Read", true);
-          fused = true;
-        }
-        // If nothing fused, mark read as false
-        if (!fused) {
-          SmartDashboard.putBoolean("SS Eagleeye Read", false);
         }
         if (Globals.LastVisionMeasurement.confidenceB == 0 && Globals.LastVisionMeasurement.confidenceA == 0) {
           SmartDashboard.putBoolean("SS Eagleeye Read", false);
@@ -159,24 +140,22 @@ public class SwerveSubsystem extends SubsystemBase {
         Globals.LastVisionMeasurement.notRead = false;
       }
       SmartDashboard.putNumber("SS AVisionRotation",
-          Globals.LastVisionMeasurement.positionA.toPose2d().getRotation().getDegrees());
+          Globals.LastVisionMeasurement.positionA.getRotation().getDegrees());
       SmartDashboard.putNumber("SS BVisionRotation",
-          Globals.LastVisionMeasurement.positionB.toPose2d().getRotation().getDegrees());
+          Globals.LastVisionMeasurement.positionB.getRotation().getDegrees());
       SmartDashboard.putNumber("SS AConfidence", Globals.LastVisionMeasurement.confidenceA);
       SmartDashboard.putNumber("SS BConfidence", Globals.LastVisionMeasurement.confidenceB);
       SmartDashboard.putNumber("SS BotRotation", swerveDrive.getPose().getRotation().getDegrees());
       SmartDashboard.putNumber("SS Swerve-Botpose-x", Units.metersToInches(swerveDrive.getPose().getX()));
       SmartDashboard.putNumber("SS Swerve-Botpose-y", Units.metersToInches(swerveDrive.getPose().getY()));
-      SmartDashboard.putNumber("SS Swerve-Botpose-rot",
-          Globals.EagleEye.position.toPose2d().getRotation().getDegrees());
+      SmartDashboard.putNumber("SS Swerve-Botpose-rot", Globals.EagleEye.position.getRotation().getDegrees());
     }
 
-    Globals.EagleEye.position = new Pose3d(swerveDrive.getPose());
+    Globals.EagleEye.position = swerveDrive.getPose();
     Globals.EagleEye.xVel = swerveDrive.getFieldVelocity().vxMetersPerSecond;
     Globals.EagleEye.yVel = swerveDrive.getFieldVelocity().vyMetersPerSecond;
     Globals.EagleEye.rotVel = swerveDrive.getFieldVelocity().omegaRadiansPerSecond;
     Globals.EagleEye.rawGyroYaw = swerveDrive.getYaw().getDegrees();
-    SmartDashboard.putNumber("SS Yaw", swerveDrive.getYaw().getDegrees());
   }
 
   @Override

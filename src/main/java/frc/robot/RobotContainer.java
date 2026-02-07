@@ -63,10 +63,9 @@ public class RobotContainer {
     } else {
           driveBase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve"));
     }
-    //((Subsystem) eagleeye).setDefaultCommand(eagleeyecommand);
     driveBase.setMotorBrake(true);
+    
     // Configure the trigger bindings
-
     if (Constants.OperatorConstants.XBOX_DRIVE) {
       driverXbox = new XboxController(0);
       if (DriverStation.isJoystickConnected(1)) {

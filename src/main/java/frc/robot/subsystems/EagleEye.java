@@ -8,43 +8,21 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.Optional;
-
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
 import frc.robot.Constants;
 import frc.robot.Constants.EagleEyeConstants;
 import frc.robot.Globals;
 import frc.robot.LimelightHelpers;
-// YALL imports
-import limelight.Limelight;
-import limelight.networktables.LimelightPoseEstimator.EstimationMode;
-import limelight.networktables.LimelightPoseEstimator;
-import limelight.networktables.PoseEstimate;
 
 /**
  * EagleEye subsystem for vision processing and pose estimation.
  */
 public class EagleEye extends SubsystemBase {
-
-  // =====================
-  // Cameras
-  // =====================
-  private final Limelight cameraA = new Limelight("limelight-cama");
-  private final Limelight cameraB = new Limelight("limelight-camb");
-
-  // =====================
-  // Get pose estimates
-  // =====================
-  LimelightPoseEstimator estimatorA = cameraA.createPoseEstimator(EstimationMode.MEGATAG2);
-
-  LimelightPoseEstimator estimatorB = cameraB.createPoseEstimator(EstimationMode.MEGATAG2);
-
   /**
    * Nothing done in init.
    */
@@ -52,46 +30,40 @@ public class EagleEye extends SubsystemBase {
   }
 
   /**
-   * Determines confidence level of vision estimations
-   * based on distance, tag count, and robot motion.
+   * Determines confidence level of limelight estimations based on distance, tag count, and robot motion.
+   * @param limelight The Limelight pose estimate.
+   * @return Confidence level between 0 and 1.
    */
-  public double limelightMeasurement(Optional<PoseEstimate> estimate) {
+  public double limelightMeasurement(LimelightHelpers.PoseEstimate limelight) {
     double confidence = 0;
 
-    if (estimate.isPresent() && estimate.get().tagCount >= 1) {
-      PoseEstimate est = estimate.get();
+    if (limelight.tagCount >= 1/* && fieldBoundary.isPoseWithinArea(limelightMeasurementa.pose) */) {
 
-      // Absolute rejection conditions
-      if (est.avgTagDist < Units.feetToMeters(15)
-          && Globals.EagleEye.rotVel < Math.PI / 2
+      // Excluding different measurements that are absolute showstoppers even with full trust
+      if (limelight.avgTagDist < Units.feetToMeters(15) && Globals.EagleEye.rotVel < Math.PI / 2
           && Math.hypot(Globals.EagleEye.xVel, Globals.EagleEye.yVel) < EagleEyeConstants.MAX_VISION_SPEED) {
-
-        // Near-perfect cases
-        if (DriverStation.isDisabled()
-            || (estimate.isPresent() && estimate.get().tagCount >= 2
-                && estimate.get().avgTagDist < Units.feetToMeters(10))) {
-
+        
+        // Reasons to blindly trust as much as odometry
+        if (DriverStation.isDisabled() ||
+            (limelight.tagCount >= 2 && limelight.avgTagDist < Units.feetToMeters(10))) {
           confidence = 0.2;
-
         } else {
-          double compareDistanceMeters = est.pose.getTranslation()
-              .getDistance(
-                  Globals.EagleEye.position.getTranslation());
+          // High trust level anything less than this we shouldn't bother with
+          double compareDistanceMeters = limelight.pose.getTranslation()
+              .getDistance(Globals.EagleEye.position.getTranslation());
 
-          if (compareDistanceMeters < 0.5
-              || (estimate.get().tagCount >= 2
-                  && estimate.get().avgTagDist < Units.feetToMeters(20))
-              || (estimate.get().tagCount == 1
-                  && estimate.get().avgTagDist < Units.feetToMeters(15))) {
+          if (compareDistanceMeters < 0.5 ||
+              (limelight.tagCount >= 2 && limelight.avgTagDist < Units.feetToMeters(20)) ||
+              (limelight.tagCount == 1 && limelight.avgTagDist < Units.feetToMeters(15))) {
+            double tagDistance = Units.metersToFeet(limelight.avgTagDist);
 
-            double tagDistanceFeet = Units.metersToFeet(estimate.get().avgTagDist);
-
-            // Penalize single-tag harder
-            if (estimate.get().tagCount == 1) {
-              tagDistanceFeet *= 2;
+            // Double the distance for solo tag
+            if (limelight.tagCount == 1) {
+              tagDistance = tagDistance * 2;
             }
 
-            confidence = 0.7 - (tagDistanceFeet / 100.0);
+            // Add up to .2 confidence depending on how far away
+            confidence = 0.7 - (tagDistance / 100);
           }
         }
       }
@@ -100,142 +72,115 @@ public class EagleEye extends SubsystemBase {
   }
 
   /**
-   * Periodic update for vision processing.
+   * Periodically updates vision measurements using two Limelight cameras, 
+   * getting confidence levels and storing the latest measurements in Globals.
    */
   @Override
   public void periodic() {
     if (RobotBase.isSimulation())
       return;
 
-    // Feed almost (YAGSL config like 'invertIMU' does affect this) raw gyro heading
-    // to Limelights
+    // Don't Read Eagleye during Teleop Paths
+    /*
+     * if(Constants.EagleEyeConstants.IN_PATH_END && Globals.inPath){
+     * Globals.LastVisionMeasurement.confidencea = 0;
+     * Globals.LastVisionMeasurement.confidenceb = 0;
+     * return;
+     * }
+     */
+
+    // If we don't update confidence then we don't send the measurement
+    double confidenceA = 0;
+    double confidenceB = 0;
+
     LimelightHelpers.SetRobotOrientation("limelight-camb", Globals.EagleEye.rawGyroYaw, 0, 0,
         0, 0, 0);
     LimelightHelpers.SetRobotOrientation("limelight-cama", Globals.EagleEye.rawGyroYaw, 0, 0,
         0, 0, 0);
 
-    double confidenceA = 0;
-    double confidenceB = 0;
+    LimelightHelpers.PoseEstimate limelightMeasurementA = LimelightHelpers
+        .getBotPoseEstimate_wpiBlue_MegaTag2("limelight-cama");
+    LimelightHelpers.PoseEstimate limelightMeasurementB = LimelightHelpers
+        .getBotPoseEstimate_wpiBlue_MegaTag2("limelight-camb");
 
-    Optional<PoseEstimate> estimateA = estimatorA.getPoseEstimate();
-    Optional<PoseEstimate> estimateB = estimatorB.getPoseEstimate();
-
-    // =====================
-    // Camera A
-    // =====================
-    if (estimateA.isPresent()) {
-      SmartDashboard.putNumber("EEA NumTags", estimateA.get().tagCount);
-      SmartDashboard.putNumber("EEA Avg Tag Dist", estimateA.get().avgTagDist);
+    if (limelightMeasurementA != null) {
+      SmartDashboard.putNumber("EEA NumTags", limelightMeasurementA.tagCount);
+      SmartDashboard.putNumber("EEA Avg Tag Dist", limelightMeasurementA.avgTagDist);
       SmartDashboard.putNumber("EE Rotation Vel", Globals.EagleEye.rotVel);
-      SmartDashboard.putNumber(
-          "EE Total Vel",
-          Math.hypot(Globals.EagleEye.xVel, Globals.EagleEye.yVel));
+      SmartDashboard.putNumber("EE Total Vel", Math.hypot(Globals.EagleEye.xVel, Globals.EagleEye.yVel));
 
-      // If alliance is RED, mirror the pose returned in Blue coordinates into Red
-      // field coordinates. This mirrors the X coordinate about the field length
-      // so fused poses are consistent with the robot's alliance frame.
-      var poseA = estimateA.get().pose;
-      if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
-        final double FIELD_LENGTH = 16.4646; // meters (used elsewhere in code)
-        double newX = FIELD_LENGTH - poseA.getTranslation().getX();
-        double newY = poseA.getTranslation().getY();
-        // Rotate yaw by 180 degrees
-        var rot = poseA.getRotation();
-        var newRot = rot.plus(new edu.wpi.first.math.geometry.Rotation3d(0, 0, Math.toRadians(180)));
-        poseA = new edu.wpi.first.math.geometry.Pose3d(
-            new edu.wpi.first.math.geometry.Translation3d(newX, newY, poseA.getTranslation().getZ()), newRot);
-      }
+      confidenceA = limelightMeasurement(limelightMeasurementA);
 
-      // Recreate an Optional-like PoseEstimate with the possibly mirrored pose
-      PoseEstimate updatedA = estimateA.get();
-      updatedA.pose = poseA;
-
-      confidenceA = limelightMeasurement(java.util.Optional.of(updatedA));
-
-      Globals.LastVisionMeasurement.positionA = updatedA.pose;
-      Globals.LastVisionMeasurement.timeStampA = updatedA.timestampSeconds;
+      Globals.LastVisionMeasurement.positionA = limelightMeasurementA.pose;
+      Globals.LastVisionMeasurement.timeStampA = limelightMeasurementA.timestampSeconds;
       Globals.LastVisionMeasurement.notRead = true;
+
     }
 
-    // =====================
-    // Camera B
-    // =====================
-    if (estimateB.isPresent()) {
-      SmartDashboard.putNumber("EEB NumTags", estimateB.get().tagCount);
-      SmartDashboard.putNumber("EEB Avg Tag Dist", estimateB.get().avgTagDist);
+    if (limelightMeasurementB != null) {
+
+      SmartDashboard.putNumber("EEB NumTags", limelightMeasurementB.tagCount);
+      SmartDashboard.putNumber("EEB Avg Tag Dist", limelightMeasurementB.avgTagDist);
       SmartDashboard.putNumber("EE Rotation Vel", Globals.EagleEye.rotVel);
-      SmartDashboard.putNumber(
-          "EE Total Vel",
-          Math.hypot(Globals.EagleEye.xVel, Globals.EagleEye.yVel));
+      SmartDashboard.putNumber("EE Total Vel", Math.hypot(Globals.EagleEye.xVel, Globals.EagleEye.yVel));
 
-      var poseB = estimateB.get().pose;
-      if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
-        final double FIELD_LENGTH = 16.4646;
-        double newX = FIELD_LENGTH - poseB.getTranslation().getX();
-        double newY = poseB.getTranslation().getY();
-        var rot = poseB.getRotation();
-        var newRot = rot.plus(new edu.wpi.first.math.geometry.Rotation3d(0, 0, Math.toRadians(180)));
-        poseB = new edu.wpi.first.math.geometry.Pose3d(
-            new edu.wpi.first.math.geometry.Translation3d(newX, newY, poseB.getTranslation().getZ()), newRot);
-      }
-      PoseEstimate updatedB = estimateB.get();
-      updatedB.pose = poseB;
+      confidenceB = limelightMeasurement(limelightMeasurementB);
 
-      confidenceB = limelightMeasurement(java.util.Optional.of(updatedB));
-
-      Globals.LastVisionMeasurement.positionB = updatedB.pose;
-      Globals.LastVisionMeasurement.timeStampB = updatedB.timestampSeconds;
+      // No tag found so check no further or pose not within field boundary
+      Globals.LastVisionMeasurement.positionB = limelightMeasurementB.pose;
+      Globals.LastVisionMeasurement.timeStampB = limelightMeasurementB.timestampSeconds;
       Globals.LastVisionMeasurement.notRead = true;
-    }
 
+    }
     Globals.LastVisionMeasurement.confidenceA = confidenceA;
     Globals.LastVisionMeasurement.confidenceB = confidenceB;
 
-    // =====================
-    // Shooting data collection (unchanged)
-    // =====================
+    // ===== SHOOTING DATA COLLECTION =====
     if (Constants.OperatorConstants.SHOOTING_DATA_COLLECTION_MODE) {
-
       if (SmartDashboard.getBoolean("Record Data", false)) {
-        File file = new File(
-            Paths.get("src", "main", "deploy", "shootingData.txt").toUri());
+        File file = new File(Paths.get("src", "main", "deploy", "shootingData.txt").toUri());
         try (FileWriter writer = new FileWriter(file)) {
-          writer.write(
-              SmartDashboard.getNumber("dist", 0) + "  "
-                  + SmartDashboard.getNumber("Test Angle", 0) + "\n");
+          // Dist Angle
+          writer.write(String.valueOf(SmartDashboard.getNumber("dist", 0)) + "  "
+              + String.valueOf(SmartDashboard.getNumber("Test Angle", 0)) + "\n");
         } catch (IOException e) {
           e.printStackTrace();
         }
+
         SmartDashboard.putBoolean("Record Data", false);
       }
 
       boolean button = SmartDashboard.getBoolean("Record Time Data", false);
       Timer timer = Globals.shootingDataCollectionSettings.timer;
 
+      // Rising-edge detection
       if (button && !Globals.shootingDataCollectionSettings.lastButtonState) {
 
         if (!Globals.shootingDataCollectionSettings.recording) {
+
+          // ===== START RECORDING =====
           timer.reset();
           timer.start();
           Globals.shootingDataCollectionSettings.recording = true;
+
           Globals.shootingDataCollectionSettings.startPose = Globals.EagleEye.position;
 
         } else {
+
+          // ===== STOP RECORDING =====
           timer.stop();
 
           double elapsedTime = timer.get();
           Globals.shootingDataCollectionSettings.endPose = Globals.EagleEye.position;
+          double distance = Globals.shootingDataCollectionSettings.endPose.getTranslation()
+          .getDistance(Globals.shootingDataCollectionSettings.startPose.getTranslation());
 
-          double distance = Globals.shootingDataCollectionSettings.endPose
-              .getTranslation()
-              .getDistance(
-                  Globals.shootingDataCollectionSettings.startPose
-                      .getTranslation());
 
-          File file = new File(
-              Paths.get("src", "main", "deploy", "shootingTimeData.txt").toUri());
+          File file = new File(Paths.get("src", "main", "deploy", "shootingTimeData.txt").toUri());
           try (FileWriter writer = new FileWriter(file)) {
-            writer.write(distance + "  " + elapsedTime + "\n");
+            // Dist Time
+            writer.write(String.valueOf(distance) + "  "
+                + String.valueOf(elapsedTime) + "\n");
           } catch (IOException e) {
             e.printStackTrace();
           }
@@ -243,9 +188,10 @@ public class EagleEye extends SubsystemBase {
           Globals.shootingDataCollectionSettings.recording = false;
         }
 
+        // Make dashboard act like a button
         SmartDashboard.putBoolean("Record Time Data", false);
       }
-
+      // Save last button state
       Globals.shootingDataCollectionSettings.lastButtonState = button;
     }
   }

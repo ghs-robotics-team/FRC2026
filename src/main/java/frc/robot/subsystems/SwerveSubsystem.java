@@ -175,6 +175,7 @@ public class SwerveSubsystem extends SubsystemBase {
     Globals.EagleEye.yVel = swerveDrive.getFieldVelocity().vyMetersPerSecond;
     Globals.EagleEye.rotVel = swerveDrive.getFieldVelocity().omegaRadiansPerSecond;
     Globals.EagleEye.rawGyroYaw = swerveDrive.getYaw().getDegrees();
+    SmartDashboard.putNumber("SS Yaw", swerveDrive.getYaw().getDegrees());
   }
 
   @Override

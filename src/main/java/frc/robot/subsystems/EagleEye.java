@@ -8,8 +8,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.Optional;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -38,14 +36,10 @@ public class EagleEye extends SubsystemBase {
    * @return Confidence level between 0 and 1.
    */
   public double limelightMeasurement(LimelightHelpers.PoseEstimate limelight) {
-    double confidence = 0;
-
-    PoseEstimate est = estimate.get();
-
     // Hard rejections
-    if (est.tagCount < 1)
+    if (limelight.tagCount < 1)
       return 0.0;
-    if (est.avgTagDist > Units.feetToMeters(20))
+    if (limelight.avgTagDist > Units.feetToMeters(20))
       return 0.0;
     if (Math.abs(Globals.EagleEye.rotVel) > Math.PI / 2)
       return 0.0;
@@ -56,19 +50,19 @@ public class EagleEye extends SubsystemBase {
     double confidence = 1.0;
 
     // Distance Penalties
-    double distMeters = est.avgTagDist;
+    double distMeters = limelight.avgTagDist;
     double distFactor = MathUtil.clamp(1.0 - distMeters / Units.feetToMeters(20), 0.0, 1.0);
     confidence *= distFactor;
 
     // Tag Count Bonuses
-    if (est.tagCount >= 2) {
+    if (limelight.tagCount >= 2) {
       confidence *= 1.0; // keep
     } else {
       confidence *= 0.5; // single-tag penalty
     }
 
     // Compare with Odometry
-    double odomError = est.pose.getTranslation()
+    double odomError = limelight.pose.getTranslation()
         .getDistance(Globals.EagleEye.position.getTranslation());
 
     double odomFactor = MathUtil.clamp(1.0 - odomError / 1.0, 0.0, 1.0); // 1m tolerance

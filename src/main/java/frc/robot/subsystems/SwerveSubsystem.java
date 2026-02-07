@@ -136,7 +136,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
     if (Globals.LastVisionMeasurement.confidenceA >= MIN_CONFIDENCE
             && Math.abs(Globals.EagleEye.rotVel) < ROT_VEL_LIMIT) {
-          swerveDrive.addVisionMeasurement(Globals.LastVisionMeasurement.positionA.toPose2d(),
+          swerveDrive.addVisionMeasurement(Globals.LastVisionMeasurement.positionA,
               Globals.LastVisionMeasurement.timeStampA, VecBuilder.fill(X_SIGMA * scaleA, Y_SIGMA * scaleA,
                THETA_SIGMA * scaleA * 1.5));
               
@@ -146,7 +146,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
         if (Globals.LastVisionMeasurement.confidenceB >= MIN_CONFIDENCE
             && Math.abs(Globals.EagleEye.rotVel) < ROT_VEL_LIMIT) {
-          swerveDrive.addVisionMeasurement(Globals.LastVisionMeasurement.positionB.toPose2d(),
+          swerveDrive.addVisionMeasurement(Globals.LastVisionMeasurement.positionB,
               Globals.LastVisionMeasurement.timeStampB, VecBuilder.fill(X_SIGMA * scaleB, Y_SIGMA * scaleB,
                THETA_SIGMA* scaleB * 1.5));
 

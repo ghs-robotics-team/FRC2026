@@ -18,7 +18,6 @@ import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -143,7 +142,6 @@ public class SwerveSubsystem extends SubsystemBase {
               
           SmartDashboard.putBoolean("SS Eagleeye Read", true);
           SmartDashboard.putBoolean("SS EagleeyeA Read", true);
-          fused = true;
         }
 
         if (Globals.LastVisionMeasurement.confidenceB >= MIN_CONFIDENCE
@@ -168,23 +166,22 @@ public class SwerveSubsystem extends SubsystemBase {
       }
 
       SmartDashboard.putNumber("SS AVisionRotation",
-          Globals.LastVisionMeasurement.positionA.toPose2d().getRotation().getDegrees());
+          Globals.LastVisionMeasurement.positionA.getRotation().getDegrees());
       SmartDashboard.putNumber("SS BVisionRotation",
-          Globals.LastVisionMeasurement.positionB.toPose2d().getRotation().getDegrees());
+          Globals.LastVisionMeasurement.positionB.getRotation().getDegrees());
       SmartDashboard.putNumber("SS AConfidence", Globals.LastVisionMeasurement.confidenceA);
       SmartDashboard.putNumber("SS BConfidence", Globals.LastVisionMeasurement.confidenceB);
       SmartDashboard.putNumber("SS BotRotation", swerveDrive.getPose().getRotation().getDegrees());
       SmartDashboard.putNumber("SS Swerve-Botpose-x", Units.metersToInches(swerveDrive.getPose().getX()));
       SmartDashboard.putNumber("SS Swerve-Botpose-y", Units.metersToInches(swerveDrive.getPose().getY()));
-      SmartDashboard.putNumber("SS Swerve-Botpose-rot", Globals.EagleEye.position.toPose2d().getRotation().getDegrees());
+      SmartDashboard.putNumber("SS Swerve-Botpose-rot", Globals.EagleEye.position.getRotation().getDegrees());
     }
 
-    Globals.EagleEye.position = new Pose3d(swerveDrive.getPose());
+    Globals.EagleEye.position = swerveDrive.getPose();
     Globals.EagleEye.xVel = swerveDrive.getFieldVelocity().vxMetersPerSecond;
     Globals.EagleEye.yVel = swerveDrive.getFieldVelocity().vyMetersPerSecond;
     Globals.EagleEye.rotVel = swerveDrive.getFieldVelocity().omegaRadiansPerSecond;
     Globals.EagleEye.rawGyroYaw = swerveDrive.getYaw().getDegrees();
-    SmartDashboard.putNumber("SS Yaw", swerveDrive.getYaw().getDegrees());
   }
 
   @Override

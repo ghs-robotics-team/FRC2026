@@ -130,9 +130,9 @@ public class SwerveSubsystem extends SubsystemBase {
         final double Y_SIGMA = 0.5; // meters
         final double THETA_SIGMA = Math.toRadians(20); // radians
 
-    boolean fused = false;
+        boolean fused = false;
 
-    if (Globals.LastVisionMeasurement.confidenceA >= MIN_CONFIDENCE
+        if (Globals.LastVisionMeasurement.confidenceA >= MIN_CONFIDENCE
             && Math.abs(Globals.EagleEye.rotVel) < ROT_VEL_LIMIT) {
           swerveDrive.addVisionMeasurement(Globals.LastVisionMeasurement.positionA.toPose2d(),
               Globals.LastVisionMeasurement.timeStampA, VecBuilder.fill(X_SIGMA, Y_SIGMA, THETA_SIGMA));
@@ -167,7 +167,8 @@ public class SwerveSubsystem extends SubsystemBase {
       SmartDashboard.putNumber("SS BotRotation", swerveDrive.getPose().getRotation().getDegrees());
       SmartDashboard.putNumber("SS Swerve-Botpose-x", Units.metersToInches(swerveDrive.getPose().getX()));
       SmartDashboard.putNumber("SS Swerve-Botpose-y", Units.metersToInches(swerveDrive.getPose().getY()));
-      SmartDashboard.putNumber("SS Swerve-Botpose-rot", Globals.EagleEye.position.toPose2d().getRotation().getDegrees());
+      SmartDashboard.putNumber("SS Swerve-Botpose-rot",
+          Globals.EagleEye.position.toPose2d().getRotation().getDegrees());
     }
 
     Globals.EagleEye.position = new Pose3d(swerveDrive.getPose());

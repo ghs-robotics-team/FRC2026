@@ -19,7 +19,9 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.DriveToPointCommand;
 import frc.robot.commands.EagleEyeCommand;
+import frc.robot.commands.TargetPoints;
 import frc.robot.subsystems.EagleEye;
 import frc.robot.subsystems.SwerveSubsystem;
 
@@ -119,9 +121,11 @@ public class RobotContainer {
   private void configureBindings() {
     if (OperatorConstants.XBOX_DRIVE) {
       new JoystickButton(driverXbox, 8).onTrue((new InstantCommand(driveBase::zeroGyro))); // (Start)
+      new JoystickButton(driverXbox, 2).onTrue(new DriveToPointCommand(TargetPoints.TAG_28, "Forward")); // (B)
     }
     else {
       new JoystickButton(leftJoystick, 4).onTrue((new InstantCommand(driveBase::zeroGyro))); // (Button 4) (Left Thumb Button)
+      new JoystickButton(leftJoystick, 3).onTrue(new DriveToPointCommand(TargetPoints.TAG_28, "Forward")); // (Button 4) (Left Thumb Button)
     }
   }
 

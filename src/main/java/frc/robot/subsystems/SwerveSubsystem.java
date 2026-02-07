@@ -130,12 +130,17 @@ public class SwerveSubsystem extends SubsystemBase {
         final double Y_SIGMA = 0.5; // meters
         final double THETA_SIGMA = Math.toRadians(20); // radians
 
+        double scaleA = 1.0 / Math.max(Globals.LastVisionMeasurement.confidenceA, 0.1);
+        double scaleB = 1.0 / Math.max(Globals.LastVisionMeasurement.confidenceB, 0.1);
+
     boolean fused = false;
 
     if (Globals.LastVisionMeasurement.confidenceA >= MIN_CONFIDENCE
             && Math.abs(Globals.EagleEye.rotVel) < ROT_VEL_LIMIT) {
           swerveDrive.addVisionMeasurement(Globals.LastVisionMeasurement.positionA.toPose2d(),
-              Globals.LastVisionMeasurement.timeStampA, VecBuilder.fill(X_SIGMA, Y_SIGMA, THETA_SIGMA));
+              Globals.LastVisionMeasurement.timeStampA, VecBuilder.fill(X_SIGMA * scaleA, Y_SIGMA * scaleA,
+               THETA_SIGMA * scaleA * 1.5));
+              
           SmartDashboard.putBoolean("SS Eagleeye Read", true);
           SmartDashboard.putBoolean("SS EagleeyeA Read", true);
           fused = true;
@@ -144,11 +149,14 @@ public class SwerveSubsystem extends SubsystemBase {
         if (Globals.LastVisionMeasurement.confidenceB >= MIN_CONFIDENCE
             && Math.abs(Globals.EagleEye.rotVel) < ROT_VEL_LIMIT) {
           swerveDrive.addVisionMeasurement(Globals.LastVisionMeasurement.positionB.toPose2d(),
-              Globals.LastVisionMeasurement.timeStampB, VecBuilder.fill(X_SIGMA, Y_SIGMA, THETA_SIGMA));
+              Globals.LastVisionMeasurement.timeStampB, VecBuilder.fill(X_SIGMA * scaleB, Y_SIGMA * scaleB,
+               THETA_SIGMA* scaleB * 1.5));
+
           SmartDashboard.putBoolean("SS Eagleeye Read", true);
           SmartDashboard.putBoolean("SS EagleeyeB Read", true);
           fused = true;
         }
+        
         // If nothing fused, mark read as false
         if (!fused) {
           SmartDashboard.putBoolean("SS Eagleeye Read", false);
@@ -158,6 +166,7 @@ public class SwerveSubsystem extends SubsystemBase {
         }
         Globals.LastVisionMeasurement.notRead = false;
       }
+
       SmartDashboard.putNumber("SS AVisionRotation",
           Globals.LastVisionMeasurement.positionA.toPose2d().getRotation().getDegrees());
       SmartDashboard.putNumber("SS BVisionRotation",

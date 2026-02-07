@@ -9,6 +9,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Optional;
+
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -50,47 +52,50 @@ public class EagleEye extends SubsystemBase {
    * @return confidence level (0 to 1) of the vision measurement
    */
   public double limelightMeasurement(Optional<PoseEstimate> estimate) {
-    double confidence = 0;
+    if (estimate.isEmpty())
+      return 0.0;
 
-    if (estimate.isPresent() && estimate.get().tagCount >= 1) {
-      PoseEstimate est = estimate.get();
+    PoseEstimate est = estimate.get();
 
-      // Absolute rejection conditions
-      if (est.avgTagDist < Units.feetToMeters(15)
-          && Globals.EagleEye.rotVel < Math.PI / 2
-          && Math.hypot(Globals.EagleEye.xVel, Globals.EagleEye.yVel) < EagleEyeConstants.MAX_VISION_SPEED) {
+    // Hard rejections
+    if (est.tagCount < 1)
+      return 0.0;
+    if (est.avgTagDist > Units.feetToMeters(20))
+      return 0.0;
+    if (Math.abs(Globals.EagleEye.rotVel) > Math.PI / 2)
+      return 0.0;
+    if (Math.hypot(Globals.EagleEye.xVel, Globals.EagleEye.yVel) > EagleEyeConstants.MAX_VISION_SPEED)
+      return 0.0;
 
-        // Near-perfect cases
-        if (DriverStation.isDisabled()
-            || (estimate.isPresent() && estimate.get().tagCount >= 2
-                && estimate.get().avgTagDist < Units.feetToMeters(10))) {
+    // Start with full trust
+    double confidence = 1.0;
 
-          confidence = 0.2;
+    // Distance Penalties
+    double distMeters = est.avgTagDist;
+    double distFactor = MathUtil.clamp(1.0 - distMeters / Units.feetToMeters(20), 0.0, 1.0);
+    confidence *= distFactor;
 
-        } else {
-          double compareDistanceMeters = est.pose.getTranslation()
-              .getDistance(
-                  Globals.EagleEye.position.getTranslation());
-
-          if (compareDistanceMeters < 0.5
-              || (estimate.get().tagCount >= 2
-                  && estimate.get().avgTagDist < Units.feetToMeters(20))
-              || (estimate.get().tagCount == 1
-                  && estimate.get().avgTagDist < Units.feetToMeters(15))) {
-
-            double tagDistanceFeet = Units.metersToFeet(estimate.get().avgTagDist);
-
-            // Penalize single-tag harder
-            if (estimate.get().tagCount == 1) {
-              tagDistanceFeet *= 2;
-            }
-
-            confidence = 0.7 - (tagDistanceFeet / 100.0);
-          }
-        }
-      }
+    // Tag Count Bonuses
+    if (est.tagCount >= 2) {
+      confidence *= 1.0; // keep
+    } else {
+      confidence *= 0.5; // single-tag penalty
     }
-    return confidence;
+
+    // Compare with Odometry
+    double odomError = est.pose.getTranslation()
+        .getDistance(Globals.EagleEye.position.getTranslation());
+
+    double odomFactor = MathUtil.clamp(1.0 - odomError / 1.0, 0.0, 1.0); // 1m tolerance
+    confidence *= odomFactor;
+
+    // Disabled or stationary bonus
+    if (DriverStation.isDisabled()) {
+      confidence *= 1.2;
+    }
+
+    // Clamp final confidence to [0, 1] to avoid invalid values.
+    return MathUtil.clamp(confidence, 0.0, 1.0);
   }
 
   /**

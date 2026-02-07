@@ -7,6 +7,7 @@ package frc.robot;
 import java.io.File;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -66,7 +67,11 @@ public class RobotContainer {
 
     if (Constants.OperatorConstants.XBOX_DRIVE) {
       driverXbox = new XboxController(0);
-      buttonsXbox = new XboxController(1);
+      if (DriverStation.isJoystickConnected(1)) {
+        buttonsXbox = new XboxController(1);
+      } else {
+        buttonsXbox = driverXbox;
+      }
       Globals.buttonsXbox = buttonsXbox;
     } else {
       rightJoystick = new Joystick(0);

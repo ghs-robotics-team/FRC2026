@@ -75,11 +75,11 @@ public class FaceTargetCommand extends Command {
     }
 
     double targetAngle = toTarget.getAngle().getDegrees();
-  double currentAngle = currentPose.getRotation().getDegrees();
-  double errorAngle = MathUtil.inputModulus(targetAngle - currentAngle, -180.0, 180.0);
+    double currentAngle = currentPose.getRotation().getDegrees();
+    double errorAngle = MathUtil.inputModulus(targetAngle - currentAngle, -180.0, 180.0);
 
-  SmartDashboard.putNumber(kTargetAngleKey, targetAngle);
-  SmartDashboard.putNumber(kErrorAngleKey, errorAngle);
+    SmartDashboard.putNumber(kTargetAngleKey, targetAngle);
+    SmartDashboard.putNumber(kErrorAngleKey, errorAngle);
 
     double rotationOutputDegPerSec = rotationController.calculate(currentPose.getRotation().getDegrees(),
         targetAngle);

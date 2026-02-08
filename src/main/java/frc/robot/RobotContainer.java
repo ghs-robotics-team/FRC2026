@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.DriveToPointCommand;
 import frc.robot.commands.EagleEyeCommand;
+import frc.robot.commands.FaceTargetCommand;
 import frc.robot.commands.TargetPoints;
 import frc.robot.subsystems.EagleEye;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -83,7 +84,7 @@ public class RobotContainer {
 
     // Configure DriveCommand
     Command driveCommand = null;
-    if (OperatorConstants.XBOX_DRIVE) {
+  if (OperatorConstants.XBOX_DRIVE) {
       driveCommand = driveBase.driveCommand(
           () -> MathUtil.applyDeadband(-driverXbox.getLeftY() * Globals.inversion, OperatorConstants.LEFT_Y_DEADBAND),
           () -> MathUtil.applyDeadband(-driverXbox.getLeftX() * Globals.inversion, OperatorConstants.LEFT_X_DEADBAND),
@@ -118,13 +119,33 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
+
     if (OperatorConstants.XBOX_DRIVE) {
-      new JoystickButton(driverXbox, 8).onTrue((new InstantCommand(driveBase::zeroGyro))); // (Start)
-      new JoystickButton(driverXbox, 2).onTrue(new DriveToPointCommand(TargetPoints.TAG_28, "Forward")); // (B)
-    }
-    else {
-      new JoystickButton(leftJoystick, 4).onTrue((new InstantCommand(driveBase::zeroGyro))); // (Button 4) (Left Thumb Button)
-      new JoystickButton(leftJoystick, 3).onTrue(new DriveToPointCommand(TargetPoints.TAG_28, "Forward")); // (Button 4) (Left Thumb Button)
+      /*
+       * Driver Xbox bindings
+       * +-----------------------------+-------------------------------+
+       * | Control                     | Action                        |
+       * +-----------------------------+-------------------------------+
+       * | Start                       | Zero gyro                     |
+       * | B (2)                       | Drive to TAG_28 (forward)     |
+       * | Y (4)                       | Face TAG_28                   |
+       * +-----------------------------+-------------------------------+
+       */
+      new JoystickButton(driverXbox, 8).onTrue((new InstantCommand(driveBase::zeroGyro)));
+      new JoystickButton(driverXbox, 2).onTrue(new DriveToPointCommand(TargetPoints.TAG_28, "Forward"));
+      new JoystickButton(driverXbox, 4).whileTrue(new FaceTargetCommand(driveBase, TargetPoints.TAG_28.get()));
+    } else {
+      /*
+       * Joystick bindings
+       * +------------------------------+-------------------------------+
+       * | Control                      | Action                        |
+       * +------------------------------+-------------------------------+
+       * | Left Joystick Button 4       | Zero gyro                     |
+       * | Left Joystick Button 3       | Drive to TAG_28 (forward)     |
+       * +------------------------------+-------------------------------+
+       */
+      new JoystickButton(leftJoystick, 4).onTrue((new InstantCommand(driveBase::zeroGyro)));
+      new JoystickButton(leftJoystick, 3).onTrue(new DriveToPointCommand(TargetPoints.TAG_28, "Forward"));
     }
   }
 

@@ -145,7 +145,8 @@ public class RobotContainer {
        * +------------------------------+-------------------------------+
        */
       new JoystickButton(leftJoystick, 4).onTrue((new InstantCommand(driveBase::zeroGyro)));
-      new JoystickButton(leftJoystick, 3).onTrue(new DriveToPointCommand(TargetPoints.TAG_28, "Forward"));
+      //new JoystickButton(leftJoystick, 3).onTrue(new DriveToPointCommand(TargetPoints.TAG_28, "Forward"));
+      new JoystickButton(leftJoystick, 3).whileTrue(new FaceTargetCommand(driveBase, TargetPoints.TAG_28.get()));
     }
   }
 

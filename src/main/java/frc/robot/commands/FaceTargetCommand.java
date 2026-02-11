@@ -78,13 +78,18 @@ public class FaceTargetCommand extends Command {
     double currentAngle = currentPose.getRotation().getDegrees();
     double errorAngle = MathUtil.inputModulus(targetAngle - currentAngle, -180.0, 180.0);
 
+    SmartDashboard.putNumber("FT Cur Angle", currentAngle);
     SmartDashboard.putNumber(kTargetAngleKey, targetAngle);
     SmartDashboard.putNumber(kErrorAngleKey, errorAngle);
 
     double rotationOutputDegPerSec = rotationController.calculate(currentPose.getRotation().getDegrees(),
         targetAngle);
+    SmartDashboard.putNumber("FT Rot Output", rotationOutputDegPerSec);
+
     double rotationOutput = Units.degreesToRadians(rotationOutputDegPerSec);
+    SmartDashboard.putNumber("FT Rot Output RAD", rotationOutput);
     rotationOutput = MathUtil.clamp(rotationOutput, -maxAngularVelocity, maxAngularVelocity);
+    SmartDashboard.putNumber("FT Rot Output CLAMP", rotationOutput);
 
     boolean rotating = true;
     if (rotationController.atSetpoint()) {
@@ -94,9 +99,11 @@ public class FaceTargetCommand extends Command {
       rotationOutput = Math.copySign(kMinAngularVelocityRadPerSec, rotationOutput);
     }
 
+    SmartDashboard.putNumber("FT Rot Output POST MIN", rotationOutput);
+
     SmartDashboard.putBoolean(kRotatingKey, rotating);
 
-    swerve.drive(new Translation2d(), rotationOutput, true);
+    swerve.drive(new Translation2d(), -rotationOutput, true);
   }
 
   // Called once the command ends or is interrupted.

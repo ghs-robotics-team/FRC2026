@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Paths;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -58,15 +59,15 @@ public class EagleEye extends SubsystemBase {
     if (limelight.tagCount >= 2) {
       confidence *= 1.0; // keep
     } else {
-      confidence *= 0.5; // single-tag penalty
+      confidence *= 0.75; // single-tag penalty
     }
 
-    // Compare with Odometry
+    /*  Compare with Odometry
     double odomError = limelight.pose.getTranslation()
         .getDistance(Globals.EagleEye.position.getTranslation());
 
-    double odomFactor = MathUtil.clamp(1.0 - odomError / 1.0, 0.0, 1.0); // 1m tolerance
-    confidence *= odomFactor;
+    double odomFactor = MathUtil.clamp(1.0 - odomError / 3.0, 0.2, 1.0);
+    confidence *= odomFactor;*/
 
     // Disabled or stationary bonus
     if (DriverStation.isDisabled()) {

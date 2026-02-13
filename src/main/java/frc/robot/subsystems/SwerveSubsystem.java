@@ -142,6 +142,7 @@ public class SwerveSubsystem extends SubsystemBase {
               
           SmartDashboard.putBoolean("SS Eagleeye Read", true);
           SmartDashboard.putBoolean("SS EagleeyeA Read", true);
+          fused = true;
         }
 
         if (Globals.LastVisionMeasurement.confidenceB >= MIN_CONFIDENCE

@@ -497,6 +497,13 @@ public class SwerveSubsystem extends SubsystemBase {
   }
 
   /**
+   * Stops all chassis motion.
+   */
+  public void stop() {
+    drive(new Translation2d(), 0.0, true);
+  }
+
+  /**
    * Drive the robot given a chassis field oriented velocity.
    *
    * @param velocity Velocity according to the field.

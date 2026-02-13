@@ -22,6 +22,7 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.DriveToPointCommand;
 import frc.robot.commands.EagleEyeCommand;
 import frc.robot.commands.FaceTargetCommand;
+import frc.robot.commands.RotateToAngleExtended;
 import frc.robot.commands.TargetPoints;
 import frc.robot.subsystems.EagleEye;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -128,12 +129,12 @@ public class RobotContainer {
        * +-----------------------------+-------------------------------+
        * | Start                       | Zero gyro                     |
        * | B (2)                       | Drive to TAG_28 (forward)     |
-       * | Y (4)                       | Face TAG_28                   |
+       * | Y (4)                       | Face Tag                      |
        * +-----------------------------+-------------------------------+
        */
       new JoystickButton(driverXbox, 8).onTrue((new InstantCommand(driveBase::zeroGyro)));
-      new JoystickButton(driverXbox, 2).onTrue(new DriveToPointCommand(TargetPoints.TAG_28, "Forward"));
-      new JoystickButton(driverXbox, 4).whileTrue(new FaceTargetCommand(driveBase, TargetPoints.TAG_28.get()));
+      new JoystickButton(driverXbox, 2).onTrue(new DriveToPointCommand(TargetPoints.TAG_25, "Forward"));
+      new JoystickButton(driverXbox, 4).whileTrue(new FaceTargetCommand(driveBase, TargetPoints.TAG_25.get()));
     } else {
       /*
        * Joystick bindings
@@ -142,11 +143,13 @@ public class RobotContainer {
        * +------------------------------+-------------------------------+
        * | Left Joystick Button 4       | Zero gyro                     |
        * | Left Joystick Button 3       | Drive to TAG_28 (forward)     |
+       * | Y (4)                        | Face Tag                      |
        * +------------------------------+-------------------------------+
        */
       new JoystickButton(leftJoystick, 4).onTrue((new InstantCommand(driveBase::zeroGyro)));
       //new JoystickButton(leftJoystick, 3).onTrue(new DriveToPointCommand(TargetPoints.TAG_28, "Forward"));
-      new JoystickButton(leftJoystick, 3).whileTrue(new FaceTargetCommand(driveBase, TargetPoints.TAG_28.get()));
+      new JoystickButton(leftJoystick, 3).whileTrue(new FaceTargetCommand(driveBase, TargetPoints.TAG_25.get()));
+      new JoystickButton(buttonsXbox, 4).whileTrue(new RotateToAngleExtended(driveBase, TargetPoints.TAG_25.get()));
     }
   }
 

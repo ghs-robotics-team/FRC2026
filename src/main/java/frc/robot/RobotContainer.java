@@ -96,7 +96,7 @@ public class RobotContainer {
               OperatorConstants.LEFT_Y_DEADBAND),
           () -> MathUtil.applyDeadband(leftJoystick.getRawAxis(0) * Globals.inversion,
               OperatorConstants.LEFT_X_DEADBAND),
-          () -> rightJoystick.getRawAxis(0));
+          () -> rightJoystick.getRawAxis(0) * Globals.inversion);
     }
 
     configureBindings();

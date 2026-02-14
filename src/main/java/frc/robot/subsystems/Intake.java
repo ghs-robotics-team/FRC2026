@@ -1,0 +1,57 @@
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
+
+package frc.robot.subsystems;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Globals;
+
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
+
+/**
+ * Retractable intake subsystem. Deploys and then intakes using a single motor.
+ * Feeds into Spindexer, which feeds into Shooter.
+ */
+public class Intake extends SubsystemBase {
+  TalonFX intakeMotor = new TalonFX(14);
+  SparkMax deployMotor = new SparkMax(15, MotorType.kBrushless);
+  double IntakeAbsoluteEncoder = intakeMotor.getPosition().getValue().magnitude();
+  double deployAbsoluteEncoder = deployMotor.getAbsoluteEncoder().getPosition();
+
+  /**
+   * Nothing done in constructor.
+   */
+  public Intake() {}
+
+  /**
+   * Deploys the intake by setting the deploy motor to a specified power level.
+   * @param power The power level to set the deploy motor to, typically between -1.0 and 1.0.
+   */
+  public void intake(double power) {
+    intakeMotor.set(power);
+  }
+
+  /**
+   * Deploys the intake by setting the deploy motor to a specified power level.
+   * @param power The power level to set the deploy motor to, typically between -1.0 and 1.0. 
+   */
+  public void deploy(double power) {
+    // When limits are needed on position, check last years code for reference.
+    // Needs PID.
+    deployMotor.set(power);
+  }
+
+  /**
+   * Periodically updates the SmartDashboard with the current position 
+   * of the intake and the target position for deployment.
+   */
+  @Override
+  public void periodic() {
+    SmartDashboard.putNumber("INT Pos", deployAbsoluteEncoder);
+    SmartDashboard.putNumber("INT Deploy Target Pos", Globals.targetPos.intakeDeployTarget);
+  }
+}

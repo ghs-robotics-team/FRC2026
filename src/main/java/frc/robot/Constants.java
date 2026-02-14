@@ -86,6 +86,8 @@ public final class Constants {
   public static class EagleEyeConstants {
     // m/s (Usually 1.5-2.5) before it stops reading vision measurements) WAS AT 2
     public static final double MAX_VISION_SPEED = 2.25;
+    public static final double MAX_TAG_DISTANCE_METERS = Units.feetToMeters(20);
+    public static final double MAX_ROTATION_VELOCITY = Math.PI / 2; // radians per second
     public static final boolean IN_PATH_END = false;
   }
 

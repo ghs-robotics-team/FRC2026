@@ -8,9 +8,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Paths;
-
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
@@ -25,6 +23,8 @@ import frc.robot.LimelightHelpers;
  * EagleEye subsystem for vision processing and pose estimation.
  */
 public class EagleEye extends SubsystemBase {
+  
+
   /**
    * Nothing done in init.
    */
@@ -37,12 +37,13 @@ public class EagleEye extends SubsystemBase {
    * @return Confidence level between 0 and 1.
    */
   public double limelightMeasurement(LimelightHelpers.PoseEstimate limelight) {
+    
     // Hard rejections
     if (limelight.tagCount < 1)
       return 0.0;
-    if (limelight.avgTagDist > Units.feetToMeters(20))
+    if (limelight.avgTagDist > EagleEyeConstants.MAX_TAG_DISTANCE_METERS)
       return 0.0;
-    if (Math.abs(Globals.EagleEye.rotVel) > Math.PI / 2)
+    if (Math.abs(Globals.EagleEye.rotVel) > EagleEyeConstants.MAX_ROTATION_VELOCITY)
       return 0.0;
     if (Math.hypot(Globals.EagleEye.xVel, Globals.EagleEye.yVel) > EagleEyeConstants.MAX_VISION_SPEED)
       return 0.0;
@@ -52,7 +53,7 @@ public class EagleEye extends SubsystemBase {
 
     // Distance Penalties
     double distMeters = limelight.avgTagDist;
-    double distFactor = MathUtil.clamp(1.0 - distMeters / Units.feetToMeters(20), 0.0, 1.0);
+    double distFactor = MathUtil.clamp(1.0 - distMeters / EagleEyeConstants.MAX_TAG_DISTANCE_METERS, 0.0, 1.0);
     confidence *= distFactor;
 
     // Tag Count Bonuses

@@ -45,8 +45,7 @@ public final class Globals {
    * Target positions for arm and elevator.
    */
   public static class targetPos {
-    public static double armTarget = 0;
-    public static double elevatorTarget = 0;
+    public static double intakeDeployTarget = 0;
   }
 
   /**

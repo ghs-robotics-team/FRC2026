@@ -9,18 +9,29 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.Constants;
 import frc.robot.Globals;
 
+/**
+ * Command that drives the robot to a specific point on the field using auto-pathfinding.
+ */
 public class DriveToPointCommand extends Command {
-  /** Creates a new DriveToPointCommand. */
   TargetPoints point;
   String heading;
 
+  /**
+   * Sets point and heading for the command.
+   * @param point The target point on the field to drive to.
+   * @param heading The desired heading of the robot at the target point.
+   */
   public DriveToPointCommand(TargetPoints point, String heading) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.point = point;
     this.heading = heading;
   }
   
-  // Called when the command is initially scheduled.
+  /**
+   * Initializes the command by building a pathfinding command based on the target point and heading, 
+   * and schedules it. Also updates SmartDashboard with the target point and sets a global variable 
+   * to indicate that the robot is currently in a pathfinding command.
+   */
   @Override
   public void initialize() {
     // Build Command based on Point and Constraints.
@@ -53,16 +64,26 @@ public class DriveToPointCommand extends Command {
       })).schedule();
   }
 
-  // Called every time the scheduler runs while the command is scheduled.
+  /**
+   * This method is intentionally left empty as the actual driving logic 
+   * is handled by the scheduled pathfinding command.
+   */
   @Override
   public void execute() {}
 
-  // Called once the command ends or is interrupted.
+  /**
+   * This method is intentionally left empty as there are 
+   * no specific actions needed when the command ends,
+   */
   @Override
   public void end(boolean interrupted) {
   }
 
-  // Returns true when the command should end.
+  /**
+   * This command is designed to finish immediately after initialization, 
+   * as the actual driving logic is handled by the scheduled pathfinding command.
+   * @return True, indicating that the command is finished after initialization.
+   */
   @Override
   public boolean isFinished() {
     return true;

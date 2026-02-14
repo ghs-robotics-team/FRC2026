@@ -34,8 +34,8 @@ public enum TargetPoints {
     public Pose2d distanceFromTag(Pose2d pose) {
         double x = pose.getX();
         double y = pose.getY();
-        x += Units.inchesToMeters(13.77) * Math.cos(pose.getRotation().getRadians()); 
-        y += Units.inchesToMeters(13.77) * Math.sin(pose.getRotation().getRadians());
+        x += Units.inchesToMeters(23.77) * Math.cos(pose.getRotation().getRadians()); 
+        y += Units.inchesToMeters(23.77) * Math.sin(pose.getRotation().getRadians());
         return new Pose2d(x, y, Rotation2d.fromDegrees(90).plus(pose.getRotation()));
     }
 

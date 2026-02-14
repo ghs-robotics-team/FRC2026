@@ -133,7 +133,7 @@ public class RobotContainer {
        * +-----------------------------+-------------------------------+
        */
       new JoystickButton(driverXbox, 8).onTrue((new InstantCommand(driveBase::zeroGyro)));
-      new JoystickButton(driverXbox, 2).onTrue(new DriveToPointCommand(TargetPoints.TAG_25, "Forward"));
+      new JoystickButton(driverXbox, 2).onTrue(new DriveToPointCommand(TargetPoints.TAG_28, "Forward"));
       new JoystickButton(driverXbox, 4).whileTrue(new FaceTargetCommand(driveBase, TargetPoints.TAG_25.get()));
     } else {
       /*
@@ -147,8 +147,8 @@ public class RobotContainer {
        * +------------------------------+-------------------------------+
        */
       new JoystickButton(leftJoystick, 4).onTrue((new InstantCommand(driveBase::zeroGyro)));
-      //new JoystickButton(leftJoystick, 3).onTrue(new DriveToPointCommand(TargetPoints.TAG_28, "Forward"));
-      new JoystickButton(leftJoystick, 3).whileTrue(new FaceTargetCommand(driveBase, TargetPoints.TAG_25.get()));
+      new JoystickButton(leftJoystick, 3).onTrue(new DriveToPointCommand(TargetPoints.TAG_28, "Forward"));
+      //new JoystickButton(leftJoystick, 3).whileTrue(new FaceTargetCommand(driveBase, TargetPoints.TAG_25.get()));
       new JoystickButton(buttonsXbox, 4).whileTrue(new RotateToAngleExtended(driveBase, TargetPoints.TAG_25.get()));
     }
   }

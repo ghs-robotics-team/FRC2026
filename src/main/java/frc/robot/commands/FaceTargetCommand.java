@@ -70,7 +70,7 @@ public class FaceTargetCommand extends Command {
     Translation2d toTarget = target.getTranslation().minus(currentPose.getTranslation());
 
     if (toTarget.getNorm() < 1e-4) {
-      swerve.stop();
+      //swerve.stop();
       return;
     }
 
@@ -109,7 +109,7 @@ public class FaceTargetCommand extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    swerve.stop();
+    //swerve.stop();
     SmartDashboard.putBoolean(kExecutingKey, false);
     SmartDashboard.putBoolean(kRotatingKey, false);
   }

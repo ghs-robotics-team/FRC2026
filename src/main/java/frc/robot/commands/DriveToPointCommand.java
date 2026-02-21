@@ -38,7 +38,7 @@ public class DriveToPointCommand extends Command {
     Command pathfindingCommand;
     if(heading.equals("Forward")){
       if(Constants.OperatorConstants.WORKSHOP_MODE){
-          pathfindingCommand = AutoBuilder.pathfindToPose(point.getForward(), new PathConstraints(Globals.workShopSettings.maxSpeed, 2, 2*Math.PI, 4*Math.PI), 0.0);
+          pathfindingCommand = AutoBuilder.pathfindToPose(point.getForward(), new PathConstraints(Constants.OperatorConstants.WORKSHOP_MAX_SPEED, 2, 2*Math.PI, 4*Math.PI), 0.0);
       } else{
           pathfindingCommand = AutoBuilder.pathfindToPose(point.getForward(), new PathConstraints(Constants.MAX_SPEED, 2, 2*Math.PI, 4*Math.PI), 0.0);
       }
@@ -46,7 +46,7 @@ public class DriveToPointCommand extends Command {
     }
     else{
       if(Constants.OperatorConstants.WORKSHOP_MODE){
-        pathfindingCommand = AutoBuilder.pathfindToPose(point.get(), new PathConstraints(Globals.workShopSettings.maxSpeed, 2, 2*Math.PI, 4*Math.PI), 0.0);
+        pathfindingCommand = AutoBuilder.pathfindToPose(point.get(), new PathConstraints(Constants.OperatorConstants.WORKSHOP_MAX_SPEED, 2, 2*Math.PI, 4*Math.PI), 0.0);
       } else{
         pathfindingCommand = AutoBuilder.pathfindToPose(point.get(), new PathConstraints(Constants.MAX_SPEED, 2, 2*Math.PI, 4*Math.PI), 0.0);
       }

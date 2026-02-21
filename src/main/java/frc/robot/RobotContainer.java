@@ -63,8 +63,8 @@ public class RobotContainer {
       eagleEyeCommand = null;
     }
     
-    SmartDashboard.putNumber("Workshop MaxSpeed", Globals.workShopSettings.maxSpeed);
-    SmartDashboard.putBoolean("Workshop Mode On", Constants.OperatorConstants.WORKSHOP_MODE);
+    SmartDashboard.putNumber("SS Workshop MaxSpeed", Constants.OperatorConstants.WORKSHOP_MAX_SPEED);
+    SmartDashboard.putBoolean("SS Workshop Mode On", Constants.OperatorConstants.WORKSHOP_MODE);
     SmartDashboard.putBoolean("Record Data", false);
     SmartDashboard.putBoolean("Record Time Data", false);
 

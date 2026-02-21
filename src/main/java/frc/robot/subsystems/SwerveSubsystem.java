@@ -93,7 +93,7 @@ public class SwerveSubsystem extends SubsystemBase {
     SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
     try {
       if (Constants.OperatorConstants.WORKSHOP_MODE) {
-        swerveDrive = new SwerveParser(directory).createSwerveDrive(Globals.workShopSettings.maxSpeed, startingPose);
+        swerveDrive = new SwerveParser(directory).createSwerveDrive(Constants.OperatorConstants.WORKSHOP_MAX_SPEED, startingPose);
       } else {
         swerveDrive = new SwerveParser(directory).createSwerveDrive(Constants.MAX_SPEED, startingPose);
       }
@@ -150,10 +150,6 @@ public class SwerveSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if (Constants.OperatorConstants.WORKSHOP_MODE) {
-      Globals.workShopSettings.maxSpeed = SmartDashboard.getNumber("Workshop MaxSpeed", 2.0);
-    }
-
     if (!DriverStation.isAutonomous() || Constants.EagleEyeConstants.EAGLEEYE_ENABLED_DURING_AUTO) {
       // Safer fusion: require minimum confidence and low angular rate. Use
       // realistic measurement sigmas (larger -> less trust) instead of

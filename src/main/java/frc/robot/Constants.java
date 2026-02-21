@@ -68,6 +68,7 @@ public final class Constants {
 
     // Makes testing safer and easier
     public static final boolean WORKSHOP_MODE = true;
+    public static final double WORKSHOP_MAX_SPEED = 2.0;
 
     // XBOX mode
     public static final boolean XBOX_DRIVE = false;

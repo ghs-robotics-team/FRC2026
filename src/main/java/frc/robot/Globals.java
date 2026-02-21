@@ -49,15 +49,6 @@ public final class Globals {
   }
 
   /**
-   * Workshop mode settings.
-   * Changeable in SmartDashboard.
-   */
-  public static class workShopSettings {
-    public static double maxSpeed = 2;
-    public static double maxRotateSpeed = Math.toRadians(360);
-  }
-
-  /**
    * Shooting data collection settings.
    */
   public static class shootingDataCollectionSettings {

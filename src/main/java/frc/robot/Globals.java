@@ -62,5 +62,5 @@ public final class Globals {
   // Miscellaneous global variables
   public static boolean inPath = false;
   public static XboxController buttonsXbox;
-  public static double inversion = -1;
+  public static double inversion = 1;
 }

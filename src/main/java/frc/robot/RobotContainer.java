@@ -24,7 +24,13 @@ import frc.robot.commands.EagleEyeCommand;
 import frc.robot.commands.FaceTargetCommand;
 import frc.robot.commands.RotateToAngleExtended;
 import frc.robot.commands.TargetPoints;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.EagleEye;
+import frc.robot.subsystems.FeedRoller;
+import frc.robot.subsystems.HoodAngler;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Spindexer;
 import frc.robot.subsystems.SwerveSubsystem;
 
 /**
@@ -41,8 +47,15 @@ public class RobotContainer {
   private final SwerveSubsystem driveBase;
   private final EagleEye eagleEye;
   private final EagleEyeCommand eagleEyeCommand;
+  private final HoodAngler hoodAngler;
+  private final Intake intake;
+  private final Shooter shooter;
+  private final Climber climber;
+  private final Spindexer spindexer;
+  private final FeedRoller feedRoller;
 
   // Teleop Commands
+  
 
   // Controllers
   private XboxController buttonsXbox;

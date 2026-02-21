@@ -19,7 +19,7 @@ public class Climber extends SubsystemBase {
     // This method will be called once per scheduler run
   }
 
-  public void Climb(double power) {
+  public void climb(double power) {
     climbMotor.set(power);
   }
 }

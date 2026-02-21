@@ -71,6 +71,5 @@ public final class Globals {
   // Miscellaneous global variables
   public static boolean inPath = false;
   public static XboxController buttonsXbox;
-  public static String robotSwerveConfig = "8702";
   public static double inversion = -1;
 }

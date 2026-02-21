@@ -39,8 +39,8 @@ import frc.robot.subsystems.SwerveSubsystem;
 public class RobotContainer {
   // Subsystems
   private final SwerveSubsystem driveBase;
-  private final EagleEye eagleEye = new EagleEye();
-  private final EagleEyeCommand eagleEyeCommand = new EagleEyeCommand(eagleEye);
+  private final EagleEye eagleEye;
+  private final EagleEyeCommand eagleEyeCommand;
 
   // Teleop Commands
 
@@ -55,19 +55,23 @@ public class RobotContainer {
    */
   public RobotContainer() {
 
+    if (Constants.EagleEyeConstants.EAGLEEYE_ENABLED) {
+      eagleEye = new EagleEye();
+      eagleEyeCommand = new EagleEyeCommand(eagleEye);
+    } else {
+      eagleEye = null;
+      eagleEyeCommand = null;
+    }
+    
     SmartDashboard.putNumber("Workshop MaxSpeed", Globals.workShopSettings.maxSpeed);
     SmartDashboard.putBoolean("Workshop Mode On", Constants.OperatorConstants.WORKSHOP_MODE);
     SmartDashboard.putBoolean("Record Data", false);
     SmartDashboard.putBoolean("Record Time Data", false);
 
-    if (Globals.robotSwerveConfig.equals("8702")){
-          driveBase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve8702"));
-    } else {
-          driveBase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve"));
-    }
+    driveBase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), Constants.DrivebaseConstants.YAGSL_CONFIG_FOLDER));
     driveBase.setMotorBrake(true);
     
-    // Configure the trigger bindings
+    // Connect the controllers
     if (Constants.OperatorConstants.XBOX_DRIVE) {
       driverXbox = new XboxController(0);
       if (DriverStation.isJoystickConnected(1)) {
@@ -85,7 +89,7 @@ public class RobotContainer {
 
     // Configure DriveCommand
     Command driveCommand = null;
-  if (OperatorConstants.XBOX_DRIVE) {
+    if (OperatorConstants.XBOX_DRIVE) {
       driveCommand = driveBase.driveCommand(
           () -> MathUtil.applyDeadband(-driverXbox.getLeftY() * Globals.inversion, OperatorConstants.LEFT_Y_DEADBAND),
           () -> MathUtil.applyDeadband(-driverXbox.getLeftX() * Globals.inversion, OperatorConstants.LEFT_X_DEADBAND),
@@ -99,26 +103,19 @@ public class RobotContainer {
           () -> rightJoystick.getRawAxis(0) * Globals.inversion);
     }
 
+    // Map controller buttons
     configureBindings();
+
+    // Set default commands
     driveBase.setDefaultCommand(driveCommand);
-    eagleEye.setDefaultCommand(eagleEyeCommand);
+    if (Constants.EagleEyeConstants.EAGLEEYE_ENABLED)
+    {
+      eagleEye.setDefaultCommand(eagleEyeCommand);
+    }
+
     SmartDashboard.putData(CommandScheduler.getInstance());
   }
 
-  /**
-   * Use this method to define your trigger->command mappings. Triggers can be
-   * created via the
-   * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with
-   * an arbitrary
-   * predicate, or via the named factories in {@link
-   * edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses for
-   * {@link
-   * CommandXboxController
-   * Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
-   * PS4} controllers or
-   * {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
-   * joysticks}.
-   */
   private void configureBindings() {
 
     if (OperatorConstants.XBOX_DRIVE) {
@@ -153,11 +150,6 @@ public class RobotContainer {
     }
   }
 
-  /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
-   * 
-   * @return the command to run in autonomous
-   */
   public Command getAutonomousCommand() {
     return null;
   }

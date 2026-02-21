@@ -32,16 +32,9 @@ public final class Constants {
   }
 
   /**
-   * Preset setpoints for the indexer arm.
+   * Preset setpoints upper mechanicals
    */
   public static final class SetPointConstants {
-    public static final double ARM_AMP = -58.873;
-    public static final double ARM_HUMAN_INTAKE = -50;
-    public static final double ARM_INTAKE = 0;
-    public static final double ARM_SPEAKER = -26.00; // -31.00;
-    public static final double ARM_MAX = 0;
-    public static final double ARM_MIN = -67.24;
-    public static final double ARM_FAR = -42;
   }
 
   /**
@@ -56,8 +49,8 @@ public final class Constants {
    * Drivebase constants.
    */
   public static final class DrivebaseConstants {
-    // Hold time on motor brakes when disabled
-    public static final double WHEEL_LOCK_TIME = 10; // seconds
+    public static final String YAGSL_CONFIG_FOLDER = "swerve8702";
+    public static final double WHEEL_LOCK_TIME = 10; // Hold time (seconds) on motor brakes when disabled
   }
 
   /**
@@ -84,10 +77,10 @@ public final class Constants {
    * Eagle Eye vision system constants.
    */
   public static class EagleEyeConstants {
-    // m/s (Usually 1.5-2.5) before it stops reading vision measurements) WAS AT 2
-    public static final double MAX_VISION_SPEED = 2.25;
+    public static final boolean EAGLEEYE_ENABLED = false;
+    public static final double MAX_VISION_SPEED = 2.25; // Units are m/s. Usually 1.5-2.5 before it stops reading vision measurements
     public static final double MAX_TAG_DISTANCE_METERS = Units.feetToMeters(20);
-    public static final double MAX_ROTATION_VELOCITY = Math.PI / 2; // radians per second
+    public static final double MAX_ROTATION_VELOCITY = Math.PI / 2; // Units are radians per second
     public static final boolean IN_PATH_END = false;
   }
 

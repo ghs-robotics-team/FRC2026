@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -14,7 +15,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
  * Effecting where the balls are angled when shot.
  */
 public class HoodAngler extends SubsystemBase {
-  SparkMax hoodAngler = new SparkMax(17, com.revrobotics.spark.SparkLowLevel.MotorType.kBrushless);
+  SparkMax hoodAngler = new SparkMax(14, MotorType.kBrushed);
   double hoodAbsoluteEncoder = hoodAngler.getAbsoluteEncoder().getPosition();
   
   /**
@@ -29,7 +30,7 @@ public class HoodAngler extends SubsystemBase {
   public void adjust(double power) {
     // Needs limits
     // Needs PID
-    hoodAngler.set(power);
+    hoodAngler.set(-power);
   }
 
   /**

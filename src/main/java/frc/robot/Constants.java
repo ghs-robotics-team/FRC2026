@@ -49,7 +49,7 @@ public final class Constants {
    * Drivebase constants.
    */
   public static final class DrivebaseConstants {
-    public static final String YAGSL_CONFIG_FOLDER = "swerve8702";
+    public static final String YAGSL_CONFIG_FOLDER = "swerve8701";
     public static final double WHEEL_LOCK_TIME = 10; // Hold time (seconds) on motor brakes when disabled
   }
 

@@ -3,15 +3,16 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.subsystems;
+import com.revrobotics.spark.SparkFlex;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
 
-import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 /**
  * Spindexer subsystem for indexing and feeding game pieces to the feed roller and shooter.
  */
 public class Spindexer extends SubsystemBase {
-  TalonFX indexer = new TalonFX(16);
+  SparkFlex indexer = new SparkFlex(4, MotorType.kBrushless);
 
   /**
    * Nothing done in constructor.
@@ -23,7 +24,7 @@ public class Spindexer extends SubsystemBase {
    * @param power The power level to set the indexer motor to, typically between -1.0 and 1.0.
    */
   public void run(double power) {
-    indexer.set(power);
+    indexer.set(-power);
   }
 
   /**

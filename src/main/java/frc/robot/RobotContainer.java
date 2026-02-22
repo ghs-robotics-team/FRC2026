@@ -11,17 +11,21 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.POVButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.ClimbOnlyCommand;
 import frc.robot.commands.EagleEyeCommand;
 import frc.robot.commands.FeedRollOnly;
 import frc.robot.commands.HoodAngleOnlyCommand;
 import frc.robot.commands.IntakeOnlyCommand;
+import frc.robot.commands.PositionIntakeCommand;
 import frc.robot.commands.ShootingOnlyCommand;
 import frc.robot.commands.SpindexOnlyCommand;
 import frc.robot.subsystems.Climber;
@@ -55,13 +59,15 @@ public class RobotContainer {
   private final FeedRoller feedRoller = new FeedRoller();
 
   // Teleop Commands
-  private final HoodAngleOnlyCommand hoodAngleOnlyCommand = new HoodAngleOnlyCommand(hoodAngler, SmartDashboard.getNumber("Hood Angle V", 0.1));
+  private final HoodAngleOnlyCommand hoodAngleOnlyCommandUp = new HoodAngleOnlyCommand(hoodAngler, SmartDashboard.getNumber("Hood Angle V", 0.1));
+  private final HoodAngleOnlyCommand hoodAngleOnlyCommandDown = new HoodAngleOnlyCommand(hoodAngler, SmartDashboard.getNumber("Hood Angle V", 0.1) * -1);
   private final IntakeOnlyCommand intakeOnlyCommand = new IntakeOnlyCommand(intake, SmartDashboard.getNumber("Intake V", 0.1));
   private final ShootingOnlyCommand shootingOnlyCommand = new ShootingOnlyCommand(shooter, SmartDashboard.getNumber("Shooting V", 0.1));
   private final ClimbOnlyCommand climbOnlyCommand = new ClimbOnlyCommand(climber, SmartDashboard.getNumber("Climber V", 0.1));
   private final SpindexOnlyCommand spindexOnlyCommand = new SpindexOnlyCommand(spindexer, SmartDashboard.getNumber("Spindex V", 0.1));
   private final FeedRollOnly feedRollOnly = new FeedRollOnly(feedRoller, SmartDashboard.getNumber("Feed Roll V", 0.1));
-
+  private final PositionIntakeCommand deployIntake = new PositionIntakeCommand(intake, 0.8);
+ 
   // Controllers
   private XboxController buttonsXbox;
   private XboxController driverXbox;
@@ -94,7 +100,7 @@ public class RobotContainer {
     SmartDashboard.putBoolean("Record Time Data", false);
 
     driveBase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), Constants.DrivebaseConstants.YAGSL_CONFIG_FOLDER));
-    driveBase.setMotorBrake(true);
+    //driveBase.setMotorBrake(true);
     
     // Connect the controllers
     if (Constants.OperatorConstants.XBOX_DRIVE) {
@@ -124,7 +130,7 @@ public class RobotContainer {
           () -> MathUtil.applyDeadband(-leftJoystick.getRawAxis(1) * Globals.inversion, OperatorConstants.LEFT_Y_DEADBAND),
           () -> MathUtil.applyDeadband(-leftJoystick.getRawAxis(0) * Globals.inversion, OperatorConstants.LEFT_X_DEADBAND),
           () -> -rightJoystick.getRawAxis(0));
-    }
+    } 
 
     // Map controller buttons
     configureBindings();
@@ -152,14 +158,17 @@ public class RobotContainer {
        * | Y (4)                       | Face Tag                      |
        * +-----------------------------+-------------------------------+
        */
-      new JoystickButton(driverXbox, 8).onTrue((new InstantCommand(driveBase::zeroGyro)));
-      //new JoystickButton(driverXbox, 2).onTrue(new DriveToPointCommand(TargetPoints.TAG_28, "Forward"));
-      //new JoystickButton(driverXbox, 4).whileTrue(new FaceTargetCommand(driveBase, TargetPoints.TAG_25.get()));
-      new JoystickButton(buttonsXbox, 1).onTrue(intakeOnlyCommand); // A
-      new JoystickButton(buttonsXbox, 2).onTrue(hoodAngleOnlyCommand); // B
-      new JoystickButton(buttonsXbox, 3).onTrue(spindexOnlyCommand); // X
-      new JoystickButton(buttonsXbox, 4).onTrue(feedRollOnly); // Y
-      new JoystickButton(buttonsXbox, 0/*RT*/).onTrue(shootingOnlyCommand); // RT
+      new JoystickButton(leftJoystick, 4).onTrue((new InstantCommand(driveBase::zeroGyro)));
+      //new JoystickButton(leftJoystick, 3).onTrue(new DriveToPointCommand(TargetPoints.TAG_28, "Forward"));
+      //new JoystickButton(leftJoystick, 3).whileTrue(new FaceTargetCommand(driveBase, TargetPoints.TAG_25.get()));
+      //new JoystickButton(buttonsXbox, 4).whileTrue(new RotateToAngleExtended(driveBase, TargetPoints.TAG_25.get()));
+      ///new JoystickButton(buttonsXbox, 1).whileTrue(intakeOnlyCommand); // A
+      new JoystickButton(buttonsXbox, 2).whileTrue(climbOnlyCommand); // B
+      //new JoystickButton(buttonsXbox, 3).onTrue(spindexOnlyCommand); // X
+      new JoystickButton(buttonsXbox, 3).onTrue(deployIntake); // X
+      new JoystickButton(buttonsXbox, 4).whileTrue(feedRollOnly); // Y
+      new POVButton(buttonsXbox, 0).whileTrue(new HoodAngleOnlyCommand(hoodAngler, SmartDashboard.getNumber("Hood Angle V", 0.1)));
+      new POVButton(buttonsXbox, 0).whileTrue(new HoodAngleOnlyCommand(hoodAngler, SmartDashboard.getNumber("Hood Angle V", 0.1) * -1));
     } else {
       /*
        * Joystick bindings
@@ -175,17 +184,24 @@ public class RobotContainer {
       //new JoystickButton(leftJoystick, 3).onTrue(new DriveToPointCommand(TargetPoints.TAG_28, "Forward"));
       //new JoystickButton(leftJoystick, 3).whileTrue(new FaceTargetCommand(driveBase, TargetPoints.TAG_25.get()));
       //new JoystickButton(buttonsXbox, 4).whileTrue(new RotateToAngleExtended(driveBase, TargetPoints.TAG_25.get()));
-      new JoystickButton(buttonsXbox, 1).onTrue(intakeOnlyCommand); // A
-      new JoystickButton(buttonsXbox, 2).onTrue(hoodAngleOnlyCommand); // B
-      new JoystickButton(buttonsXbox, 3).onTrue(spindexOnlyCommand); // X
-      new JoystickButton(buttonsXbox, 4).onTrue(feedRollOnly); // Y
-      new JoystickButton(buttonsXbox, 0/*RT*/).onTrue(shootingOnlyCommand); // RT
+      new JoystickButton(buttonsXbox, 1).whileTrue(new IntakeOnlyCommand(intake, SmartDashboard.getNumber("Intake V", 0.1))); // A
+      new POVButton(buttonsXbox, 0).whileTrue(new ClimbOnlyCommand(climber, SmartDashboard.getNumber("Climber V", 0.1))); // B
+      new POVButton(buttonsXbox, 180).whileTrue(new ClimbOnlyCommand(climber, SmartDashboard.getNumber("Climber V", 0.1) * -1)); // B
+      new JoystickButton(buttonsXbox, 3).whileTrue(new SpindexOnlyCommand(spindexer, SmartDashboard.getNumber("Spindex V", 0.1))); // X
+      //new JoystickButton(buttonsXbox, 4).whileTrue(deployIntake); // Y
+      new JoystickButton(buttonsXbox, 4).whileTrue(new FeedRollOnly(feedRoller, SmartDashboard.getNumber("Feed Roll V", 0.1))); // Y
+      new POVButton(buttonsXbox, 90).whileTrue(new HoodAngleOnlyCommand(hoodAngler, SmartDashboard.getNumber("Hood Angle V", 0.1)));
+      new POVButton(buttonsXbox, 270).whileTrue(new HoodAngleOnlyCommand(hoodAngler, SmartDashboard.getNumber("Hood Angle V", 0.1) * -1));
+      new JoystickButton(buttonsXbox, 8).whileTrue(new ShootingOnlyCommand(shooter, SmartDashboard.getNumber("Shooting V", 0.1)));
+
+     // new Trigger(buttonsXbox.rightTrigger(0.5, null)).whileTrue(shootingOnlyCommand); // Right Trigger
     }
   }
 
   public Command getAutonomousCommand() {
     return null;
   }
+
 
   /**
    * Sets the motor brake mode for the drivebase.

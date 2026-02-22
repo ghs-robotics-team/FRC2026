@@ -30,7 +30,7 @@ public class HoodAngleOnlyCommand extends Command {
    */
   @Override
   public void initialize() {
-    hoodAngler.adjust(0);
+    hoodAngler.adjust(0.1);
   }
 
   /**

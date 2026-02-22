@@ -7,16 +7,28 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.revrobotics.spark.SparkFlex;
 
+/**
+ * Feeds the game piece to the shooter subsystem.
+ */
 public class FeedRoller extends SubsystemBase {
-  SparkFlex rollerMotor = new SparkFlex(19, com.revrobotics.spark.SparkLowLevel.MotorType.kBrushless);
-  /** Creates a new FeedRoller. */
+  SparkFlex rollerMotor = new SparkFlex(13, com.revrobotics.spark.SparkLowLevel.MotorType.kBrushless);
+
+  /**
+   * Nothing done in constructor.
+   */
   public FeedRoller() {}
 
+  /**
+   * Nothing done in periodic.
+   */
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
   }
 
+  /**
+   * Runs the FeedRoller motor.
+   * @param power Power to run the motor at, ranging from -1 to 1.
+   */
   public void roll (double power) {
     rollerMotor.set(power);
   }

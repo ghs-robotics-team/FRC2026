@@ -5,21 +5,34 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.spark.SparkFlex;
-
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+/**
+ * Climber subsystem using a hook.
+ */
 public class Climber extends SubsystemBase {
-  /** Creates a new Climber. */
-  SparkFlex climbMotor = new SparkFlex(18, com.revrobotics.spark.SparkLowLevel.MotorType.kBrushless);
-  
+  SparkFlex climbMotor = new SparkFlex(7, com.revrobotics.spark.SparkLowLevel.MotorType.kBrushless);
+  double climbMotorEncoder = climbMotor.getAbsoluteEncoder().getPosition();
+
+  /**
+   * Nothing done in constructor.
+   */
   public Climber() {}
 
+  /**
+   * Displays the position of the claw motor in SmartDashBoard.
+   */
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    SmartDashboard.putNumber("Climber POS", climbMotorEncoder);
   }
 
+  /**
+   * Runs the climber motor.
+   * @param power The power to run the motor at, ranging from -1 to 1.
+   */
   public void climb(double power) {
-    climbMotor.set(power);
+    climbMotor.set(-power);
   }
 }

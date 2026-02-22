@@ -7,20 +7,19 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Globals;
-
-import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkFlex;
 
 /**
  * Retractable intake subsystem. Deploys and then intakes using a single motor.
  * Feeds into Spindexer, which feeds into Shooter.
  */
 public class Intake extends SubsystemBase {
-  TalonFX intakeMotor = new TalonFX(14);
-  SparkMax deployMotor = new SparkMax(15, MotorType.kBrushless);
-  double IntakeAbsoluteEncoder = intakeMotor.getPosition().getValue().magnitude();
-  double deployAbsoluteEncoder = deployMotor.getAbsoluteEncoder().getPosition();
+  SparkFlex intakeMotor = new SparkFlex(24, MotorType.kBrushless);
+  SparkMax deployMotor = new SparkMax(27, MotorType.kBrushless);
+  //double IntakeAbsoluteEncoder = intakeMotor.getPosition().getValue().magnitude();
+  //double deployAbsoluteEncoder = deployMotor.getAbsoluteEncoder().getPosition();
 
   /**
    * Nothing done in constructor.
@@ -32,7 +31,7 @@ public class Intake extends SubsystemBase {
    * @param power The power level to set the deploy motor to, typically between -1.0 and 1.0.
    */
   public void intake(double power) {
-    intakeMotor.set(power);
+    intakeMotor.set(-power);
   }
 
   /**
@@ -42,7 +41,7 @@ public class Intake extends SubsystemBase {
   public void deploy(double power) {
     // When limits are needed on position, check last years code for reference.
     // Needs PID.
-    deployMotor.set(power);
+    //deployMotor.set(power);
   }
 
   /**
@@ -51,7 +50,7 @@ public class Intake extends SubsystemBase {
    */
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("INT Pos", deployAbsoluteEncoder);
+    //SmartDashboard.putNumber("INT Pos", deployAbsoluteEncoder);
     SmartDashboard.putNumber("INT Deploy Target Pos", Globals.targetPos.intakeDeployTarget);
   }
 }

@@ -4,7 +4,8 @@
 
 package frc.robot.subsystems;
 
-import com.ctre.phoenix6.hardware.TalonFX;
+import com.revrobotics.spark.SparkFlex;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -13,7 +14,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
  * Uses a single motor to shoot and a hood angler to adjust the angle of the shot.
  */
 public class Shooter extends SubsystemBase {
-  TalonFX shooter = new TalonFX(18);
+  SparkFlex shooterTop = new SparkFlex(18, MotorType.kBrushless);
+  SparkFlex shooterBottom = new SparkFlex(8, MotorType.kBrushless);
 
   /**
    * Nothing done in constructor.
@@ -25,7 +27,8 @@ public class Shooter extends SubsystemBase {
    * @param power The power level to set the shooter motor to, typically between -1.0 and 1.0.
    */
   public void shoot(double power) {
-    shooter.set(power);
+    shooterTop.set(power);
+    shooterBottom.set(-power);
   }
 
   /*

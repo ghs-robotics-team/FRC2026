@@ -65,7 +65,7 @@ public class RobotContainer {
   private final SpindexOnlyCommand spindexOnlyCommand = new SpindexOnlyCommand(spindexer, SmartDashboard.getNumber("Spindex V", 0.1));
   private final FeedRollOnly feedRollOnly = new FeedRollOnly(feedRoller, SmartDashboard.getNumber("Feed Roll V", 0.1));
   private final PositionIntakeCommand deployIntakeUp = new PositionIntakeCommand(intake, -0.1);
-  private final PositionIntakeCommand deployIntakeDown = new PositionIntakeCommand(intake, -0.1);
+  private final PositionIntakeCommand deployIntakeDown = new PositionIntakeCommand(intake, 0.1);
  
   // Controllers
   private XboxController buttonsXbox;
@@ -185,14 +185,14 @@ public class RobotContainer {
       //new JoystickButton(buttonsXbox, 4).whileTrue(new RotateToAngleExtended(driveBase, TargetPoints.TAG_25.get()));
       new JoystickButton(buttonsXbox, 1).whileTrue(new IntakeOnlyCommand(intake, 0.9/*SmartDashboard.getNumber("Intake V", 0.1)*/)); // A
       //new JoystickButton(buttonsXbox, 1).onFalse(intakeOnlyCommand(intake, )).withTimeout(0.8)
-      new POVButton(buttonsXbox, 0).whileTrue(new ClimbOnlyCommand(climber, SmartDashboard.getNumber("Climber V", 0.1))); // B
-      new POVButton(buttonsXbox, 180).whileTrue(new ClimbOnlyCommand(climber, SmartDashboard.getNumber("Climber V", 0.1) * -1)); // B
-      new JoystickButton(buttonsXbox, 3).whileTrue(new SpindexOnlyCommand(spindexer, .8/*SmartDashboard.getNumber("Spindex V", 0.1) */)); // X
-      //new JoystickButton(buttonsXbox, 4).whileTrue(deployIntake); // Y
-      //new JoystickButton(buttonsXbox, 4).whileTrue(new FeedRollOnly(feedRoller, SmartDashboard.getNumber("Feed Roll V", 0.1))); // Y
+      new POVButton(buttonsXbox, 0).whileTrue(new ClimbOnlyCommand(climber, SmartDashboard.getNumber("Climber V", 1))); // B
+      new POVButton(buttonsXbox, 180).whileTrue(new ClimbOnlyCommand(climber, SmartDashboard.getNumber("Climber V", 1) * -1)); // B
+      new JoystickButton(buttonsXbox, 3).whileTrue( deployIntakeDown/*new SpindexOnlyCommand(spindexer, .8/*SmartDashboard.getNumber("Spindex V", 0.1) */); // X
+      //new JoystickButton(buttonsXbox, 4).whileTrue(deployIntakeUp); // Y
+      new JoystickButton(buttonsXbox, 4).whileTrue(new FeedRollOnly(feedRoller, 1 /*SmartDashboard.getNumber("Feed Roll V", 1)*/)); // Y
       new POVButton(buttonsXbox, 90).whileTrue(new HoodAngleOnlyCommand(hoodAngler, SmartDashboard.getNumber("Hood Angle V", 0.1)));
       new POVButton(buttonsXbox, 270).whileTrue(new HoodAngleOnlyCommand(hoodAngler, SmartDashboard.getNumber("Hood Angle V", 0.1) * -1));
-      new JoystickButton(buttonsXbox, 8).whileTrue(new ShootingOnlyCommand(shooter, SmartDashboard.getNumber("Shooting V", 0.1)));
+      new JoystickButton(buttonsXbox, 8).whileTrue(new ShootingOnlyCommand(shooter, 2 /*SmartDashboard.getNumber("Shooting V", 1)*/));
 
      // new Trigger(buttonsXbox.rightTrigger(0.5, null)).whileTrue(shootingOnlyCommand); // Right Trigger
     }

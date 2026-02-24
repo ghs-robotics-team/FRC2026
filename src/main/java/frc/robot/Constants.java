@@ -66,6 +66,9 @@ public final class Constants {
     // Makes data taking easier
     public static final boolean SHOOTING_DATA_COLLECTION_MODE = false;
 
+    // Dynamically Control Subsystem power
+    public static final boolean  DYNAMIC_POWER_CONTROL = true;
+
     // Makes testing safer and easier
     public static final boolean WORKSHOP_MODE = true;
     public static final double WORKSHOP_MAX_SPEED = 2.0;

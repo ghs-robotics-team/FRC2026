@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import com.revrobotics.spark.SparkFlex;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
 /**
  * Climber subsystem using a hook.
@@ -33,6 +34,9 @@ public class Climber extends SubsystemBase {
    * @param power The power to run the motor at, ranging from -1 to 1.
    */
   public void climb(double power) {
+    if (Constants.OperatorConstants.DYNAMIC_POWER_CONTROL) {
+      power = SmartDashboard.getNumber("Climber V", 0.1);
+    }
     climbMotor.set(-power);
   }
 }

@@ -7,7 +7,9 @@ package frc.robot.subsystems;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
 /**
  * Shoots game pieces at end of subsystem chain. 
@@ -27,6 +29,9 @@ public class Shooter extends SubsystemBase {
    * @param power The power level to set the shooter motor to, typically between -1.0 and 1.0.
    */
   public void shoot(double power) {
+    if (Constants.OperatorConstants.DYNAMIC_POWER_CONTROL) {
+      power = SmartDashboard.getNumber("Shooting V", 0.1);
+    }
     shooterTop.set(power);
     shooterBottom.set(-power);
   }
@@ -36,6 +41,5 @@ public class Shooter extends SubsystemBase {
    */
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
   }
 }

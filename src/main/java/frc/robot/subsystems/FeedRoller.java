@@ -4,7 +4,10 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
+
 import com.revrobotics.spark.SparkFlex;
 
 /**
@@ -30,6 +33,9 @@ public class FeedRoller extends SubsystemBase {
    * @param power Power to run the motor at, ranging from -1 to 1.
    */
   public void roll (double power) {
+    if (Constants.OperatorConstants.DYNAMIC_POWER_CONTROL) {
+      power = SmartDashboard.getNumber("Feed Roll V", 0.1);
+    }
     rollerMotor.set(power);
   }
 }

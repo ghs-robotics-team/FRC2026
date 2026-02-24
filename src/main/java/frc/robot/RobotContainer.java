@@ -57,13 +57,14 @@ public class RobotContainer {
   private final FeedRoller feedRoller = new FeedRoller();
 
   // Teleop Commands
-  private final HoodAngleOnlyCommand hoodAngleOnlyCommandUp = new HoodAngleOnlyCommand(hoodAngler, SmartDashboard.getNumber("Hood Angle V", 0.1));
-  private final HoodAngleOnlyCommand hoodAngleOnlyCommandDown = new HoodAngleOnlyCommand(hoodAngler, SmartDashboard.getNumber("Hood Angle V", 0.1) * -1);
-  private final IntakeOnlyCommand intakeOnlyCommand = new IntakeOnlyCommand(intake, SmartDashboard.getNumber("Intake V", 0.1));
-  private final ShootingOnlyCommand shootingOnlyCommand = new ShootingOnlyCommand(shooter, SmartDashboard.getNumber("Shooting V", 0.1));
-  private final ClimbOnlyCommand climbOnlyCommand = new ClimbOnlyCommand(climber, SmartDashboard.getNumber("Climber V", 0.1));
-  private final SpindexOnlyCommand spindexOnlyCommand = new SpindexOnlyCommand(spindexer, SmartDashboard.getNumber("Spindex V", 0.1));
-  private final FeedRollOnly feedRollOnly = new FeedRollOnly(feedRoller, SmartDashboard.getNumber("Feed Roll V", 0.1));
+  private final HoodAngleOnlyCommand hoodAngleOnlyCommandUp = new HoodAngleOnlyCommand(hoodAngler, 0.1);
+  private final HoodAngleOnlyCommand hoodAngleOnlyCommandDown = new HoodAngleOnlyCommand(hoodAngler, -0.1);
+  private final IntakeOnlyCommand intakeOnlyCommand = new IntakeOnlyCommand(intake, 0.1);
+  private final ShootingOnlyCommand shootingOnlyCommand = new ShootingOnlyCommand(shooter, 0.1);
+  private final ClimbOnlyCommand climbOnlyCommandUp = new ClimbOnlyCommand(climber, 0.1);
+  private final ClimbOnlyCommand climbOnlyCommandDown = new ClimbOnlyCommand(climber, -0.1);
+  private final SpindexOnlyCommand spindexOnlyCommand = new SpindexOnlyCommand(spindexer, 0.1);
+  private final FeedRollOnly feedRollOnly = new FeedRollOnly(feedRoller, 0.1);
   private final PositionIntakeCommand deployIntakeUp = new PositionIntakeCommand(intake, -0.1);
   private final PositionIntakeCommand deployIntakeDown = new PositionIntakeCommand(intake, 0.1);
  
@@ -78,8 +79,9 @@ public class RobotContainer {
    */
   public RobotContainer() {
 
-    SmartDashboard.putNumber("Hood Angle V", 0.1);
+    SmartDashboard.putNumber("HoodAngle V", 0.1);
     SmartDashboard.putNumber("Intake V", 0.1);
+    SmartDashboard.putNumber("IntakeDeploy V", 0.1);
     SmartDashboard.putNumber("Shooting V", 0.1);
     SmartDashboard.putNumber("Climber V", 0.1);
     SmartDashboard.putNumber("Spindexer V", 0.1);
@@ -148,26 +150,31 @@ public class RobotContainer {
 
     if (OperatorConstants.XBOX_DRIVE) {
       /*
-       * Driver Xbox bindings
-       * +-----------------------------+-------------------------------+
-       * | Control                     | Action                        |
-       * +-----------------------------+-------------------------------+
-       * | Start                       | Zero gyro                     |
-       * | B (2)                       | Drive to TAG_28 (forward)     |
-       * | Y (4)                       | Face Tag                      |
-       * +-----------------------------+-------------------------------+
+       * Joystick bindings
+       * +------------------------------+-------------------------------+
+       * | Control                      | Action                        |
+       * +------------------------------+-------------------------------+
+       * | Left Joystick Button 4       | Zero gyro                     |
+       * | Left Joystick Button 3       | Drive to TAG_28 (forward)     |
+       * | Y (4)                        | Face Tag                      |
+       * +------------------------------+-------------------------------+
        */
       new JoystickButton(leftJoystick, 4).onTrue((new InstantCommand(driveBase::zeroGyro)));
       //new JoystickButton(leftJoystick, 3).onTrue(new DriveToPointCommand(TargetPoints.TAG_28, "Forward"));
       //new JoystickButton(leftJoystick, 3).whileTrue(new FaceTargetCommand(driveBase, TargetPoints.TAG_25.get()));
       //new JoystickButton(buttonsXbox, 4).whileTrue(new RotateToAngleExtended(driveBase, TargetPoints.TAG_25.get()));
-      ///new JoystickButton(buttonsXbox, 1).whileTrue(intakeOnlyCommand); // A
-      new JoystickButton(buttonsXbox, 2).whileTrue(climbOnlyCommand); // B
-      //new JoystickButton(buttonsXbox, 3).onTrue(spindexOnlyCommand); // X
-      //new JoystickButton(buttonsXbox, 3).onTrue(deployIntake); // X
-      new JoystickButton(buttonsXbox, 4).whileTrue(feedRollOnly); // Y
-      new POVButton(buttonsXbox, 0).whileTrue(new HoodAngleOnlyCommand(hoodAngler, SmartDashboard.getNumber("Hood Angle V", 0.1)));
-      new POVButton(buttonsXbox, 0).whileTrue(new HoodAngleOnlyCommand(hoodAngler, SmartDashboard.getNumber("Hood Angle V", 0.1) * -1));
+      new JoystickButton(buttonsXbox, 1).whileTrue(intakeOnlyCommand); // A
+      //new JoystickButton(buttonsXbox, 1).onFalse(intakeOnlyCommand(intake, )).withTimeout(0.8)
+      new POVButton(buttonsXbox, 0).whileTrue(climbOnlyCommandUp); // DPad Up
+      new POVButton(buttonsXbox, 180).whileTrue(climbOnlyCommandDown); // DPad Down
+      new JoystickButton(buttonsXbox, 3).whileTrue(spindexOnlyCommand); // X
+      //new JoystickButton(buttonsXbox, 4).whileTrue(deployIntake); // Y
+      //new JoystickButton(buttonsXbox, 4).whileTrue(new FeedRollOnly(feedRoller, SmartDashboard.getNumber("Feed Roll V", 0.1))); // Y
+      new POVButton(buttonsXbox, 90).whileTrue(hoodAngleOnlyCommandUp); // DPad Right
+      new POVButton(buttonsXbox, 270).whileTrue(hoodAngleOnlyCommandDown); // DPad Left
+      new JoystickButton(buttonsXbox, 8).whileTrue(shootingOnlyCommand); // Right Stick Button
+
+     // new Trigger(buttonsXbox.rightTrigger(0.5, null)).whileTrue(shootingOnlyCommand); // Right Trigger
     } else {
       /*
        * Joystick bindings
@@ -183,17 +190,16 @@ public class RobotContainer {
       //new JoystickButton(leftJoystick, 3).onTrue(new DriveToPointCommand(TargetPoints.TAG_28, "Forward"));
       //new JoystickButton(leftJoystick, 3).whileTrue(new FaceTargetCommand(driveBase, TargetPoints.TAG_25.get()));
       //new JoystickButton(buttonsXbox, 4).whileTrue(new RotateToAngleExtended(driveBase, TargetPoints.TAG_25.get()));
-      new JoystickButton(buttonsXbox, 1).whileTrue(new IntakeOnlyCommand(intake, 0.9/*SmartDashboard.getNumber("Intake V", 0.1)*/)); // A
+      new JoystickButton(buttonsXbox, 1).whileTrue(intakeOnlyCommand); // A
       //new JoystickButton(buttonsXbox, 1).onFalse(intakeOnlyCommand(intake, )).withTimeout(0.8)
-      new POVButton(buttonsXbox, 0).whileTrue(new ClimbOnlyCommand(climber, SmartDashboard.getNumber("Climber V", 1))); // B
-      new POVButton(buttonsXbox, 180).whileTrue(new ClimbOnlyCommand(climber, SmartDashboard.getNumber("Climber V", 1) * -1)); // B
-      new JoystickButton(buttonsXbox, 3).whileTrue( deployIntakeDown/*new SpindexOnlyCommand(spindexer, .8/*SmartDashboard.getNumber("Spindex V", 0.1) */); // X
-      //new JoystickButton(buttonsXbox, 4).whileTrue(deployIntakeUp); // Y
-      new JoystickButton(buttonsXbox, 4).whileTrue(new FeedRollOnly(feedRoller, 1 /*SmartDashboard.getNumber("Feed Roll V", 1)*/)); // Y
-      new POVButton(buttonsXbox, 90).whileTrue(new HoodAngleOnlyCommand(hoodAngler, SmartDashboard.getNumber("Hood Angle V", 0.1)));
-      new POVButton(buttonsXbox, 270).whileTrue(new HoodAngleOnlyCommand(hoodAngler, SmartDashboard.getNumber("Hood Angle V", 0.1) * -1));
-      new JoystickButton(buttonsXbox, 8).whileTrue(new ShootingOnlyCommand(shooter, 1 /*SmartDashboard.getNumber("Shooting V", 1)*/));
-
+      new POVButton(buttonsXbox, 0).whileTrue(climbOnlyCommandUp); // DPad Up
+      new POVButton(buttonsXbox, 180).whileTrue(climbOnlyCommandDown); // DPad Down
+      new JoystickButton(buttonsXbox, 3).whileTrue(spindexOnlyCommand); // X
+      //new JoystickButton(buttonsXbox, 4).whileTrue(deployIntake); // Y
+      //new JoystickButton(buttonsXbox, 4).whileTrue(new FeedRollOnly(feedRoller, SmartDashboard.getNumber("Feed Roll V", 0.1))); // Y
+      new POVButton(buttonsXbox, 90).whileTrue(hoodAngleOnlyCommandUp); // DPad Right
+      new POVButton(buttonsXbox, 270).whileTrue(hoodAngleOnlyCommandDown); // DPad Left
+      new JoystickButton(buttonsXbox, 8).whileTrue(shootingOnlyCommand); // Right Stick Button
      // new Trigger(buttonsXbox.rightTrigger(0.5, null)).whileTrue(shootingOnlyCommand); // Right Trigger
     }
   }

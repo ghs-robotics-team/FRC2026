@@ -9,6 +9,7 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
 /**
  * HoodAngler subsystem for adjusting the angle of the shooter hood.
@@ -30,6 +31,9 @@ public class HoodAngler extends SubsystemBase {
   public void adjust(double power) {
     // Needs limits
     // Needs PID
+    if (Constants.OperatorConstants.DYNAMIC_POWER_CONTROL) {
+      power = SmartDashboard.getNumber("HoodAngle V", 0.1);
+    }
     hoodAngler.set(-power);
   }
 

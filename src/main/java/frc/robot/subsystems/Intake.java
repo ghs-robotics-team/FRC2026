@@ -41,7 +41,7 @@ public class Intake extends SubsystemBase {
   public void deploy(double power) {
     // When limits are needed on position, check last years code for reference.
     // Needs PID.
-    //deployMotor.set(power);
+    deployMotor.set(power);
   }
 
   /**

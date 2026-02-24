@@ -34,7 +34,7 @@ public class Climber extends SubsystemBase {
    * @param power The power to run the motor at, ranging from -1 to 1.
    */
   public void climb(double power) {
-    if (Constants.OperatorConstants.DYNAMIC_POWER_CONTROL) {
+    if (Constants.OperatorConstants.DYNAMIC_POWER_CONTROL && power != 0) {
       power = SmartDashboard.getNumber("Climber V", 0.1);
     }
     climbMotor.set(-power);

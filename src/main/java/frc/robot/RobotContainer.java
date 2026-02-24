@@ -196,7 +196,7 @@ public class RobotContainer {
       new POVButton(buttonsXbox, 180).whileTrue(climbOnlyCommandDown); // DPad Down
       new JoystickButton(buttonsXbox, 3).whileTrue(spindexOnlyCommand); // X
       //new JoystickButton(buttonsXbox, 4).whileTrue(deployIntake); // Y
-      //new JoystickButton(buttonsXbox, 4).whileTrue(new FeedRollOnly(feedRoller, SmartDashboard.getNumber("Feed Roll V", 0.1))); // Y
+      //new JoystickButton(buttonsXbox, 4).whileTrue(feedRollOnly); // Y
       new POVButton(buttonsXbox, 90).whileTrue(hoodAngleOnlyCommandUp); // DPad Right
       new POVButton(buttonsXbox, 270).whileTrue(hoodAngleOnlyCommandDown); // DPad Left
       new JoystickButton(buttonsXbox, 8).whileTrue(shootingOnlyCommand); // Right Stick Button

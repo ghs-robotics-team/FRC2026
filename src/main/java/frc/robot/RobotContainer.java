@@ -192,7 +192,7 @@ public class RobotContainer {
       new JoystickButton(buttonsXbox, 4).whileTrue(new FeedRollOnly(feedRoller, 1 /*SmartDashboard.getNumber("Feed Roll V", 1)*/)); // Y
       new POVButton(buttonsXbox, 90).whileTrue(new HoodAngleOnlyCommand(hoodAngler, SmartDashboard.getNumber("Hood Angle V", 0.1)));
       new POVButton(buttonsXbox, 270).whileTrue(new HoodAngleOnlyCommand(hoodAngler, SmartDashboard.getNumber("Hood Angle V", 0.1) * -1));
-      new JoystickButton(buttonsXbox, 8).whileTrue(new ShootingOnlyCommand(shooter, 2 /*SmartDashboard.getNumber("Shooting V", 1)*/));
+      new JoystickButton(buttonsXbox, 8).whileTrue(new ShootingOnlyCommand(shooter, 1 /*SmartDashboard.getNumber("Shooting V", 1)*/));
 
      // new Trigger(buttonsXbox.rightTrigger(0.5, null)).whileTrue(shootingOnlyCommand); // Right Trigger
     }

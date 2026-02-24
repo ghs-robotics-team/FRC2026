@@ -66,7 +66,7 @@ public class RobotContainer {
   private final SpindexOnlyCommand spindexOnlyCommand = new SpindexOnlyCommand(spindexer, 0.1);
   private final FeedRollOnly feedRollOnly = new FeedRollOnly(feedRoller, 0.1);
   private final PositionIntakeCommand deployIntakeUp = new PositionIntakeCommand(intake, -0.1);
-  private final PositionIntakeCommand deployIntakeDown = new PositionIntakeCommand(intake, -0.1);
+  private final PositionIntakeCommand deployIntakeDown = new PositionIntakeCommand(intake, 0.1);
  
   // Controllers
   private XboxController buttonsXbox;
@@ -200,7 +200,6 @@ public class RobotContainer {
       new POVButton(buttonsXbox, 90).whileTrue(hoodAngleOnlyCommandUp); // DPad Right
       new POVButton(buttonsXbox, 270).whileTrue(hoodAngleOnlyCommandDown); // DPad Left
       new JoystickButton(buttonsXbox, 8).whileTrue(shootingOnlyCommand); // Right Stick Button
-
      // new Trigger(buttonsXbox.rightTrigger(0.5, null)).whileTrue(shootingOnlyCommand); // Right Trigger
     }
   }

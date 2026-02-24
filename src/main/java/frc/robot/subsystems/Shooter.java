@@ -33,7 +33,7 @@ public class Shooter extends SubsystemBase {
       power = SmartDashboard.getNumber("Shooting V", 0.1);
     }
     shooterTop.set(power);
-    shooterBottom.set(-power);
+    shooterBottom.set(power);
   }
 
   /*

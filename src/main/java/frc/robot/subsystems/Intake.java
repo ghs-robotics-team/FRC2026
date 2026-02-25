@@ -32,7 +32,7 @@ public class Intake extends SubsystemBase {
    * @param power The power level to set the deploy motor to, typically between -1.0 and 1.0.
    */
   public void intake(double power) {
-    if (Constants.OperatorConstants.DYNAMIC_POWER_CONTROL) {
+    if (Constants.OperatorConstants.DYNAMIC_POWER_CONTROL && power != 0) {
       power = SmartDashboard.getNumber("Intake V", 0.1);
     }
     intakeMotor.set(-power);
@@ -45,7 +45,7 @@ public class Intake extends SubsystemBase {
   public void deploy(double power) {
     // When limits are needed on position, check last years code for reference.
     // Needs PID.
-    if (Constants.OperatorConstants.DYNAMIC_POWER_CONTROL) {
+    if (Constants.OperatorConstants.DYNAMIC_POWER_CONTROL && power != 0) {
       power = SmartDashboard.getNumber("IntakeDeploy V", 0.1);
     }
     deployMotor.set(power);

@@ -31,7 +31,7 @@ public class HoodAngler extends SubsystemBase {
   public void adjust(double power) {
     // Needs limits
     // Needs PID
-    if (Constants.OperatorConstants.DYNAMIC_POWER_CONTROL) {
+    if (Constants.OperatorConstants.DYNAMIC_POWER_CONTROL && power != 0) {
       power = SmartDashboard.getNumber("HoodAngle V", 0.1);
     }
     hoodAngler.set(-power);

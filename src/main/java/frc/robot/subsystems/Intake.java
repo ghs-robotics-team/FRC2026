@@ -69,6 +69,10 @@ public class Intake extends SubsystemBase {
     deployMotor.set(power);
   }
 
+  /**
+   * Get absolute encoder position
+   * @return Absolute Encoder Position of the motor.
+   */
   public double getPos(){
     return deployAbsoluteEncoder;
   }
@@ -81,5 +85,6 @@ public class Intake extends SubsystemBase {
   public void periodic() {
     //SmartDashboard.putNumber("INT Pos", deployAbsoluteEncoder);
     SmartDashboard.putNumber("INT Deploy Target Pos", Globals.targetPos.intakeDeployTarget);
+    SmartDashboard.putNumber("INT POS", deployAbsoluteEncoder);
   }
 }

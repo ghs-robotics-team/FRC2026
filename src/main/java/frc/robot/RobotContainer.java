@@ -67,7 +67,7 @@ public class RobotContainer {
   private final ClimbOnlyCommand climbOnlyCommandDown = new ClimbOnlyCommand(climber, -0.1);
   private final SpindexOnlyCommand spindexOnlyCommand = new SpindexOnlyCommand(spindexer, 0.1);
   private final FeedRollOnly feedRollOnly = new FeedRollOnly(feedRoller, 0.1);
-  private final PositionIntakeCommand deployIntakeUp = new PositionIntakeCommand(intake, -0.1);
+  private final PositionIntakeCommand deployIntake = new PositionIntakeCommand(intake, -0.1);
   private final PositionIntakeCommand deployIntakeDown = new PositionIntakeCommand(intake, 0.1);
  
   // Controllers

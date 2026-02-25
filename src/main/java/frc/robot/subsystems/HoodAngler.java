@@ -34,7 +34,7 @@ public class HoodAngler extends SubsystemBase {
     if (Constants.OperatorConstants.DYNAMIC_POWER_CONTROL && power != 0) {
       power = SmartDashboard.getNumber("HoodAngle V", 0.1);
     }
-    /* Tune limits
+    /* Tune limits when encoder wire arrives.
     if(power<=0){
       if(getPos() <= 0){ 
         hoodAngler.set(-power);
@@ -51,10 +51,14 @@ public class HoodAngler extends SubsystemBase {
         hoodAngler.set(0);
       }
     } */
-    SmartDashboard.putNumber("ES AbsPos", getPos()); // Doesn't show up
+    SmartDashboard.putNumber("HOOD AbsPos", getPos()); // Doesn't show up
     hoodAngler.set(-power);
   }
 
+  /**
+   * Get absolute encoder position
+   * @return Absolute Encoder Position of the motor.
+   */
   public double getPos(){
     return hoodAbsoluteEncoder;
   }

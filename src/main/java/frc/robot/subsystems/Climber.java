@@ -23,14 +23,6 @@ public class Climber extends SubsystemBase {
   public Climber() {}
 
   /**
-   * Displays the position of the claw motor in SmartDashBoard.
-   */
-  @Override
-  public void periodic() {
-    SmartDashboard.putNumber("Climber POS", climbMotorEncoder);
-  }
-
-  /**
    * Runs the climber motor.
    * @param power The power to run the motor at, ranging from -1 to 1.
    */
@@ -56,5 +48,21 @@ public class Climber extends SubsystemBase {
       }
     } */
     climbMotor.set(-power);
+  }
+
+  /**
+   * Get absolute encoder position
+   * @return Absolute Encoder Position of the motor.
+   */
+  public double getPos(){
+    return climbMotorEncoder;
+  }
+
+  /**
+   * Displays the position of the claw motor in SmartDashBoard.
+   */
+  @Override
+  public void periodic() {
+    SmartDashboard.putNumber("CL POS", climbMotorEncoder);
   }
 }

@@ -4,8 +4,8 @@
 
 package frc.robot.subsystems;
 
-import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -35,6 +35,10 @@ public class HoodAngler extends SubsystemBase {
       power = SmartDashboard.getNumber("HoodAngle V", 0.1);
     }
     hoodAngler.set(-power);
+  }
+
+  public double getPos(){
+    return hoodAbsoluteEncoder;
   }
 
   /**

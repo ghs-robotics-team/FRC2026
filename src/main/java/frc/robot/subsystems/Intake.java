@@ -4,13 +4,14 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.spark.SparkFlex;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Globals;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.SparkFlex;
 
 /**
  * Retractable intake subsystem. Deploys and then intakes using a single motor.
@@ -20,7 +21,7 @@ public class Intake extends SubsystemBase {
   SparkFlex intakeMotor = new SparkFlex(24, MotorType.kBrushless);
   SparkMax deployMotor = new SparkMax(27, MotorType.kBrushless);
   //double IntakeAbsoluteEncoder = intakeMotor.getPosition().getValue().magnitude();
-  //double deployAbsoluteEncoder = deployMotor.getAbsoluteEncoder().getPosition();
+  double deployAbsoluteEncoder = deployMotor.getAbsoluteEncoder().getPosition();
 
   /**
    * Nothing done in constructor.
@@ -49,6 +50,10 @@ public class Intake extends SubsystemBase {
       power = SmartDashboard.getNumber("IntakeDeploy V", 0.1);
     }
     deployMotor.set(power);
+  }
+
+  public double getPos(){
+    return deployAbsoluteEncoder;
   }
 
   /**

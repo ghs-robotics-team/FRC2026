@@ -49,6 +49,23 @@ public class Intake extends SubsystemBase {
     if (Constants.OperatorConstants.DYNAMIC_POWER_CONTROL && power != 0) {
       power = SmartDashboard.getNumber("IntakeDeploy V", 0.1);
     }
+    /* Tune location numbers
+    if(power<=0){
+      if(getPos() <= 0){ 
+        deployMotor.set(-power);
+      }
+      else{
+        deployMotor.set(0);
+      }
+    }
+    else{
+      if(getPos() > -20.7){
+        deployMotor.set(-power);
+      }
+      else{
+        deployMotor.set(0);
+      }
+    } */
     deployMotor.set(power);
   }
 

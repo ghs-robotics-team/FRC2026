@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.spark.SparkFlex;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -37,6 +38,23 @@ public class Climber extends SubsystemBase {
     if (Constants.OperatorConstants.DYNAMIC_POWER_CONTROL && power != 0) {
       power = SmartDashboard.getNumber("Climber V", 0.1);
     }
+    /* Tune location numbers
+    if(power<=0){
+      if(getPos() <= 0){ 
+        climbMotor.set(-power);
+      }
+      else{
+        climbMotor.set(0);
+      }
+    }
+    else{
+      if(getPos() > -20.7){
+        climbMotor.set(-power);
+      }
+      else{
+        climbMotor.set(0);
+      }
+    } */
     climbMotor.set(-power);
   }
 }

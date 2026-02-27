@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -17,7 +18,8 @@ import frc.robot.Constants;
  */
 public class HoodAngler extends SubsystemBase {
   SparkMax hoodAngler = new SparkMax(14, MotorType.kBrushed);
-  double hoodAbsoluteEncoder = hoodAngler.getAbsoluteEncoder().getPosition();
+  Encoder encoder = new Encoder(8,9);
+  double hoodEncoderVal = encoder.getRaw();
   
   /**
    * Nothing done in constructor.
@@ -34,7 +36,8 @@ public class HoodAngler extends SubsystemBase {
     if (Constants.OperatorConstants.DYNAMIC_POWER_CONTROL && power != 0) {
       power = SmartDashboard.getNumber("HoodAngle V", 0.1);
     }
-    /* Tune limits when encoder wire arrives.
+    // Tune limits when encoder wire arrives.
+    power = -power;
     if(power<=0){
       if(getPos() <= 0){ 
         hoodAngler.set(-power);
@@ -44,15 +47,15 @@ public class HoodAngler extends SubsystemBase {
       }
     }
     else{
-      if(getPos() > -20.7){
+      if(getPos() > -1300){
         hoodAngler.set(-power);
       }
       else{
         hoodAngler.set(0);
       }
-    } */
+    } 
     SmartDashboard.putNumber("HOOD AbsPos", getPos()); // Doesn't show up
-    hoodAngler.set(-power);
+    hoodAngler.set(power);
   }
 
   /**
@@ -60,7 +63,7 @@ public class HoodAngler extends SubsystemBase {
    * @return Absolute Encoder Position of the motor.
    */
   public double getPos(){
-    return hoodAbsoluteEncoder;
+    return hoodEncoderVal;
   }
 
   /**
@@ -68,6 +71,7 @@ public class HoodAngler extends SubsystemBase {
    */
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("HOOD Pos", hoodAbsoluteEncoder);
+    hoodEncoderVal = encoder.getRaw();
+    SmartDashboard.putNumber("HOOD Pos", hoodEncoderVal);
   }
 }

@@ -213,6 +213,13 @@ public class SwerveSubsystem extends SubsystemBase {
     Globals.EagleEye.yVel = swerveDrive.getFieldVelocity().vyMetersPerSecond;
     Globals.EagleEye.rotVel = swerveDrive.getFieldVelocity().omegaRadiansPerSecond;
     Globals.EagleEye.rawGyroYaw = swerveDrive.getYaw().getDegrees();
+
+    SmartDashboard.putNumber("BackLeft Module Rotation", swerveDrive.getModules()[0].getAngleMotor().getPosition());
+    SmartDashboard.putNumber("BackRight Module Rotation", swerveDrive.getModules()[1].getAngleMotor().getPosition());
+    SmartDashboard.putNumber("FrontLeft Module Rotation", swerveDrive.getModules()[2].getAngleMotor().getPosition());
+    SmartDashboard.putNumber("FrontRight Module Rotation", swerveDrive.getModules()[3].getAngleMotor().getPosition());
+    
+    
   }
 
   @Override

@@ -19,8 +19,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.ClimbOnlyCommand;
 import frc.robot.commands.EagleEyeCommand;
@@ -73,7 +75,7 @@ public class RobotContainer {
   private final ClimbOnlyCommand climbOnlyCommandDown = new ClimbOnlyCommand(climber, -0.1);
   private final SpindexOnlyCommand spindexOnlyCommand = new SpindexOnlyCommand(spindexer, 0.1);
   private final FeedRollOnly feedRollOnly = new FeedRollOnly(feedRoller, 0.1);
-  private final PositionIntakeCommand deployIntakeUp = new PositionIntakeCommand(intake, -0.1);
+  private final PositionIntakeCommand deployIntake = new PositionIntakeCommand(intake, -0.1);
   private final PositionIntakeCommand deployIntakeDown = new PositionIntakeCommand(intake, 0.1);
 
   // Shoot Chain Teleop Commands
@@ -198,6 +200,14 @@ public class RobotContainer {
       //new JoystickButton(buttonsXbox, 4).whileTrue(new RotateToAngleExtended(driveBase, TargetPoints.TAG_25.get()));
       
      // new Trigger(buttonsXbox.rightTrigger(0.5, null)).whileTrue(shootingOnlyCommand); // Right Trigger
+     new Trigger(() ->
+     buttonsXbox.getLeftY() >0.5)
+     .whileTrue( 
+      new RunCommand (
+        () ->
+        new ShootingOnlyCommand(shooter, buttonsXbox.getLeftY())
+      )
+     );
     }
   }
 

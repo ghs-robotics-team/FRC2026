@@ -4,13 +4,14 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.spark.SparkFlex;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Globals;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.SparkFlex;
 
 /**
  * Retractable intake subsystem. Deploys and then intakes using a single motor.
@@ -20,7 +21,7 @@ public class Intake extends SubsystemBase {
   SparkFlex intakeMotor = new SparkFlex(24, MotorType.kBrushless);
   SparkMax deployMotor = new SparkMax(27, MotorType.kBrushless);
   //double IntakeAbsoluteEncoder = intakeMotor.getPosition().getValue().magnitude();
-  //double deployAbsoluteEncoder = deployMotor.getAbsoluteEncoder().getPosition();
+  double deployAbsoluteEncoder = deployMotor.getAbsoluteEncoder().getPosition();
 
   /**
    * Nothing done in constructor.
@@ -48,7 +49,32 @@ public class Intake extends SubsystemBase {
     if (Constants.OperatorConstants.DYNAMIC_POWER_CONTROL && power != 0) {
       power = SmartDashboard.getNumber("IntakeDeploy V", 0.1);
     }
+    /* Tune location numbers
+    if(power<=0){
+      if(getPos() <= 0){ 
+        deployMotor.set(-power);
+      }
+      else{
+        deployMotor.set(0);
+      }
+    }
+    else{
+      if(getPos() > -20.7){
+        deployMotor.set(-power);
+      }
+      else{
+        deployMotor.set(0);
+      }
+    } */
     deployMotor.set(power);
+  }
+
+  /**
+   * Get absolute encoder position
+   * @return Absolute Encoder Position of the motor.
+   */
+  public double getPos(){
+    return deployAbsoluteEncoder;
   }
 
   /**
@@ -59,5 +85,6 @@ public class Intake extends SubsystemBase {
   public void periodic() {
     //SmartDashboard.putNumber("INT Pos", deployAbsoluteEncoder);
     SmartDashboard.putNumber("INT Deploy Target Pos", Globals.targetPos.intakeDeployTarget);
+    SmartDashboard.putNumber("INT POS", deployAbsoluteEncoder);
   }
 }
